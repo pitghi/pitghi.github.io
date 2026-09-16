@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Gabin">
+  <!-- Marque provisoire : un « G » géométrique, tracé sur fond transparent pour que
+       la teinte par thème (.brand img) fonctionne comme pour le « m » de Maurice.
+       À remplacer par le vrai logo Gabin le jour où il existe. -->
+  <path d="M44.7 19.3A18 18 0 1 0 50 32H32"
+        fill="none" stroke="#0A0A0A" stroke-width="9"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
