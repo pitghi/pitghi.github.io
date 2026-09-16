@@ -54,11 +54,32 @@ footer.bottom { margin-top: 4rem; padding-block: 2rem; border-top: 1px solid var
 footer.bottom .links { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem; }
 footer.bottom a { color: var(--muted); }
 
-/* Galerie de captures — défilement horizontal, une carte par écran sur mobile */
-.shots { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 258px); gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-block: 0.5rem 1.25rem; margin-inline: calc(-1 * max(16px, (100vw - 880px) / 2)); padding-inline: max(16px, (100vw - 880px) / 2); scrollbar-width: thin; }
-.shots figure { margin: 0; scroll-snap-align: center; }
+/* Carrousel de captures — cartes côte à côte, défilement par à-coups */
+.shots-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.shots-head h2 { margin-bottom: 0.25rem; }
+.shots-head .meta { margin: 0; }
+.shots-nav { display: flex; gap: 0.5rem; padding-bottom: 0.25rem; }
+.shots-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--surface); color: var(--fg); cursor: pointer; transition: border-color 0.15s, opacity 0.15s; }
+.shots-btn:hover:not(:disabled) { border-color: var(--fg); }
+.shots-btn:disabled { opacity: 0.35; cursor: default; }
+.shots-btn:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+.shots { display: grid; grid-auto-flow: column; grid-auto-columns: 244px; gap: 1rem; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; padding-block: 1.25rem 0.25rem; scrollbar-width: none; }
+.shots::-webkit-scrollbar { display: none; }
+.shots:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: var(--radius-md); }
+.shots figure { margin: 0; scroll-snap-align: start; }
 .shots img { width: 100%; height: auto; border-radius: var(--radius-xl); border: 1px solid var(--border); background: var(--surface); }
-.shots figcaption { margin-top: 0.6rem; font-size: 0.92rem; color: var(--muted); text-align: center; }
+.shots figcaption { margin-top: 0.7rem; font-size: 0.9rem; color: var(--muted); text-align: center; }
+
+.shots-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+.shots-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: var(--radius-pill); background: var(--border); cursor: pointer; transition: background 0.15s, width 0.15s; }
+.shots-dot.is-active { background: var(--fg); width: 22px; }
+.shots-dot:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+/* Au doigt, on balaie : les flèches ne servent à rien et les pastilles suffisent. */
+@media (hover: none) and (pointer: coarse) { .shots-nav { display: none; } }
+@media (max-width: 480px) { .shots { grid-auto-columns: min(244px, 68vw); } }
+@media (prefers-reduced-motion: reduce) { .shots { scroll-behavior: auto; } }
 
 /* Tableaux : en cartes empilées sur écran étroit */
 @media (max-width: 640px) {

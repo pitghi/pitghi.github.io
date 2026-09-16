@@ -59,9 +59,22 @@
       </section>
 
       <section id="apercu">
-        <h2>Un aperçu</h2>
-        <p class="meta">Captures de la version iPhone. La version Android affiche les mêmes écrans.</p>
-        <div class="shots">
+        <div class="shots-head">
+          <div>
+            <h2>Un aperçu</h2>
+            <p class="meta">Captures de la version iPhone. La version Android affiche les mêmes écrans.</p>
+          </div>
+          <div class="shots-nav">
+            <button type="button" class="shots-btn" data-dir="-1" aria-label="Captures précédentes" aria-controls="shots">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button type="button" class="shots-btn" data-dir="1" aria-label="Captures suivantes" aria-controls="shots">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="shots" id="shots" tabindex="0" role="group" aria-label="Captures d'écran de l'application, faites défiler horizontalement">
           <figure><img src="assets/captures/capture-1.png" alt="Écran d'accueil listant trois roadtrips avec leurs pays, dates et nombre d'étapes" width="516" height="1118" loading="lazy"><figcaption>Tous vos roadtrips au même endroit</figcaption></figure>
           <figure><img src="assets/captures/capture-2.png" alt="Fiche d'une étape avec son trajet, son moyen de transport et son programme" width="516" height="1118" loading="lazy"><figcaption>Le détail de chaque étape</figcaption></figure>
           <figure><img src="assets/captures/capture-3.png" alt="Liste ordonnée des étapes d'un roadtrip" width="516" height="1118" loading="lazy"><figcaption>Le voyage entier, jour par jour</figcaption></figure>
@@ -69,6 +82,8 @@
           <figure><img src="assets/captures/capture-5.png" alt="Lexique des mots utiles dans la langue du pays traversé" width="516" height="1118" loading="lazy"><figcaption>Les mots utiles du pays</figcaption></figure>
           <figure><img src="assets/captures/capture-6.png" alt="Écran d'invitation d'un compagnon par lien et par code" width="516" height="1118" loading="lazy"><figcaption>Vos compagnons, en un lien</figcaption></figure>
         </div>
+
+        <div class="shots-dots" id="shots-dots" aria-hidden="true"></div>
       </section>
 
       <section>
@@ -87,5 +102,71 @@
       <div>© 2026 Paul Renauldon. Maurice est une marque d'usage de son éditeur.</div>
     </footer>
   </div>
+
+  <script>
+    (function () {
+      var rail = document.getElementById('shots');
+      var dotsBox = document.getElementById('shots-dots');
+      if (!rail || !dotsBox) return;
+      var cards = Array.prototype.slice.call(rail.querySelectorAll('figure'));
+      var buttons = Array.prototype.slice.call(document.querySelectorAll('.shots-btn'));
+      if (!cards.length) return;
+
+      // Une pastille par capture : elles servent aussi de raccourci.
+      var dots = cards.map(function (card, i) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'shots-dot';
+        dot.setAttribute('aria-label', 'Aller à la capture ' + (i + 1) + ' sur ' + cards.length);
+        dot.addEventListener('click', function () {
+          rail.scrollTo({ left: card.offsetLeft - rail.offsetLeft, behavior: 'smooth' });
+        });
+        dotsBox.appendChild(dot);
+        return dot;
+      });
+      dotsBox.removeAttribute('aria-hidden');
+
+      // La carte « courante » est celle dont le bord gauche est le plus proche
+      // du bord gauche du rail — plus stable que de mesurer le centre.
+      function currentIndex() {
+        var best = 0, bestGap = Infinity;
+        cards.forEach(function (card, i) {
+          var gap = Math.abs(card.offsetLeft - rail.offsetLeft - rail.scrollLeft);
+          if (gap < bestGap) { bestGap = gap; best = i; }
+        });
+        return best;
+      }
+
+      function sync() {
+        var i = currentIndex();
+        dots.forEach(function (dot, j) {
+          dot.classList.toggle('is-active', j === i);
+        });
+        // Marge d'un pixel : les navigateurs arrondissent scrollLeft.
+        var atStart = rail.scrollLeft <= 1;
+        var atEnd = rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 1;
+        buttons.forEach(function (btn) {
+          btn.disabled = btn.dataset.dir === '-1' ? atStart : atEnd;
+        });
+      }
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var step = cards[0].getBoundingClientRect().width + 16; // 16 = gap
+          var page = Math.max(1, Math.floor(rail.clientWidth / step));
+          rail.scrollBy({ left: step * page * Number(btn.dataset.dir), behavior: 'smooth' });
+        });
+      });
+
+      var ticking = false;
+      rail.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { sync(); ticking = false; });
+      });
+      window.addEventListener('resize', sync);
+      sync();
+    })();
+  </script>
 </body>
 </html>
