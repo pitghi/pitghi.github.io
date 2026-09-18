@@ -1,0 +1,31 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["9952578M38.com.paulrenauldon.maurice"],
+        "components": [
+          {
+            "/": "/ouvrir",
+            "?": { "c": "?*" },
+            "comment": "Partage d'un carnet de voyage : ouvre Maurice sur l'apercu du carnet."
+          },
+          {
+            "/": "/ouvrir",
+            "?": { "r": "?*" },
+            "comment": "Invitation a un roadtrip : ouvre Maurice sur l'apercu de l'invitation."
+          },
+          {
+            "/": "/ouvrir/",
+            "?": { "c": "?*" },
+            "comment": "Idem, avec la barre finale que le navigateur ajoute parfois."
+          },
+          {
+            "/": "/ouvrir/",
+            "?": { "r": "?*" },
+            "comment": "Idem, avec la barre finale que le navigateur ajoute parfois."
+          }
+        ]
+      }
+    ]
+  }
+}

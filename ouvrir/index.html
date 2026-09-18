@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ouvrir dans Maurice</title>
+  <meta name="description" content="Ouvrez ce carnet de voyage ou ce roadtrip dans l'application Maurice.">
+  <!-- Page de rebond d'un lien privé : elle n'a rien à faire dans un moteur de recherche. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- ⚠️ CETTE PAGE DOIT RESTER SERVIE À `/ouvrir` (d'où le dossier, et non un
+       `ouvrir.html`) : c'est le chemin déclaré dans
+       `.well-known/apple-app-site-association`, celui que l'app route, et celui
+       que construisent l'app et l'Edge Function `join`. Le renommer casse les
+       Universal Links ET les liens déjà partagés. -->
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@600;700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="wrap wrap--narrow">
+    <header class="top">
+      <a class="brand" href="/"><img src="/assets/gabin.svg" alt="" width="36" height="36">Gabin</a>
+      <nav class="top-links" aria-label="Navigation">
+        <a href="/maurice.html">Maurice</a>
+        <a href="/confidentialite.html">Confidentialité</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero hero--plain">
+        <p class="eyebrow" id="eyebrow">Invitation</p>
+        <h1 id="title">Ouvrir dans Maurice</h1>
+        <p class="lead" id="lead">Maurice est une application iPhone : le contenu partagé s'ouvre dans l'app.</p>
+
+        <div class="cta-row">
+          <a class="btn btn--primary" id="open" href="#" hidden>Ouvrir dans Maurice</a>
+          <a class="btn btn--ghost" id="store" href="https://apps.apple.com/app/id6791181940">Télécharger sur l'App Store</a>
+        </div>
+
+        <p class="meta" id="hint" style="margin-top:1.25rem">Vous n'avez pas encore Maurice ? Installez l'app, puis revenez sur ce lien : il vous emmènera au bon endroit.</p>
+      </section>
+
+      <p class="note">La version Android arrive sur Google Play. En attendant, ce lien ne s'ouvre que sur iPhone.</p>
+    </main>
+
+    <footer class="bottom">
+      <div class="links">
+        <a href="/maurice.html">Maurice</a>
+        <a href="/confidentialite.html">Politique de confidentialité</a>
+        <a href="mailto:paulrpers@gmail.com">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+  /*
+   * Rebond d'un lien de partage vers l'application.
+   *
+   * POURQUOI CETTE PAGE : un lien qui redirigeait directement vers le schéma
+   * `roadtripmoto://…` affichait « Safari ne peut pas ouvrir la page car
+   * l'adresse n'est pas valide » chez toute personne n'ayant PAS l'app — c'est
+   * justement elle qu'il faut accueillir. On ne déclenche donc JAMAIS le
+   * schéma tout seul au chargement (c'est ce qui provoque l'alerte) : on
+   * affiche une page qui propose d'ouvrir l'app OU de l'installer.
+   *
+   * AVEC LES UNIVERSAL LINKS (cf. `.well-known/apple-app-site-association` et
+   * `docs/universal-links.md` du dépôt Maurice), iOS n'ouvre même plus Safari
+   * quand Maurice est installée : il remet l'URL à l'app. Cette page ne
+   * s'affiche alors QUE chez qui n'a pas l'app — exactement son rôle. Le bouton
+   * « Ouvrir dans Maurice » reste utile pour les versions de l'app antérieures
+   * aux Universal Links, et sur Android.
+   *
+   * EXCEPTION : si cet appareil a déjà ouvert l'app depuis cette page, on sait
+   * que le schéma est géré → on bascule directement, sans le tap en trop.
+   *
+   * Paramètres acceptés :  ?c=<CODE> → un carnet de voyage
+   *                        ?r=<CODE> → un roadtrip (invitation de compagnon)
+   */
+  (function () {
+    var SCHEME = 'roadtripmoto';
+    // Un code de partage (cf. gen_share_code dans schema.sql) : 8 caractères
+    // alphanumériques. On tolère 4→32, et on refuse tout le reste plutôt que
+    // de le recopier dans une URL.
+    var CODE_RE = /^[A-Za-z0-9]{4,32}$/;
+    var SEEN_KEY = 'maurice.app-installee';
+
+    var params = new URLSearchParams(location.search);
+    var journalCode = params.get('c');
+    var roadtripCode = params.get('r');
+
+    var kind = null;
+    var code = null;
+    if (journalCode && CODE_RE.test(journalCode)) { kind = 'journal'; code = journalCode; }
+    else if (roadtripCode && CODE_RE.test(roadtripCode)) { kind = 'roadtrip'; code = roadtripCode; }
+
+    var elTitle = document.getElementById('title');
+    var elLead = document.getElementById('lead');
+    var elEyebrow = document.getElementById('eyebrow');
+    var elOpen = document.getElementById('open');
+    var elHint = document.getElementById('hint');
+
+    if (!kind) {
+      elEyebrow.textContent = 'Lien invalide';
+      elTitle.textContent = 'Ce lien ne mène nulle part';
+      elLead.textContent = "Le lien est incomplet ou a été coupé par la messagerie. Demandez à la personne qui vous l'a envoyé de le repartager.";
+      elHint.hidden = true;
+      return;
+    }
+
+    var deepLink = SCHEME + '://' + (kind === 'journal' ? 'journal' : 'join') + '/' + code;
+
+    if (kind === 'journal') {
+      elEyebrow.textContent = 'Carnet de voyage';
+      elTitle.textContent = 'Suivez ce carnet de voyage';
+      elLead.textContent = "Photos et récit du voyage, étape par étape, dans l'application Maurice.";
+    } else {
+      elEyebrow.textContent = 'Roadtrip';
+      elTitle.textContent = 'Rejoignez ce roadtrip';
+      elLead.textContent = "Le programme, les étapes et les logements du voyage, dans l'application Maurice.";
+    }
+
+    elOpen.href = deepLink;
+    elOpen.hidden = false;
+
+    // L'app s'est ouverte → l'onglet passe en arrière-plan. On le note pour
+    // basculer directement la prochaine fois.
+    function rememberIfLeaving() {
+      if (document.visibilityState === 'hidden') {
+        try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) { /* mode privé : tant pis */ }
+      }
+    }
+    elOpen.addEventListener('click', function () {
+      document.addEventListener('visibilitychange', rememberIfLeaving, { once: true });
+    });
+
+    var known = false;
+    try { known = localStorage.getItem(SEEN_KEY) === '1'; } catch (e) { /* mode privé */ }
+    if (known) {
+      elHint.textContent = 'Ouverture de Maurice…';
+      location.href = deepLink;
+    }
+  })();
+  </script>
+</body>
+</html>
