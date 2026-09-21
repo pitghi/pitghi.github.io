@@ -1,4 +1,5 @@
-/* Maurice — site vitrine. Palette « Noir & Blanc doux » de l'app (src/theme/tokens.json). */
+/* Gabin — site du studio. Palette « Noir & Blanc doux » héritée de Maurice
+   (src/theme/tokens.json de l'app) : le studio et ses apps partagent la même. */
 :root {
   --bg: #FAFAFA; --surface: #FFFFFF; --surface-muted: #F4F4F4;
   --fg: #0A0A0A; --muted: #707070; --border: #E2E2E2;
@@ -48,7 +49,8 @@ nav.top-links a:hover { color: var(--fg); }
 .app-card p { color: var(--muted); margin: 0 0 0.6rem; }
 .app-meta { font-size: 0.88rem; color: var(--muted); }
 @media (max-width: 480px) { .app-card { flex-direction: column; gap: 1rem; } }
-.hero .lead { font-size: clamp(1.1rem, 2.4vw, 1.35rem); color: var(--muted); max-width: 40ch; }
+.lead { color: var(--muted); max-width: 64ch; }
+.hero .lead { font-size: clamp(1.1rem, 2.4vw, 1.35rem); max-width: 40ch; }
 .hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }
 .hero-grid img { width: clamp(120px, 22vw, 200px); height: auto; border-radius: 22%; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
 @media (max-width: 640px) { .hero-grid { grid-template-columns: 1fr; } .hero-grid img { order: -1; width: 112px; } }
@@ -109,3 +111,21 @@ footer.bottom a { color: var(--muted); }
   td:first-child { font-family: var(--font-heading); font-weight: 700; font-size: 1.05rem; padding-bottom: 0.4rem; }
   td:first-child::before { display: none; }
 }
+
+/* Méthode — une liste ordonnée qui se lit comme un parcours, pas comme une liste */
+.steps { list-style: none; counter-reset: step; padding: 0; margin: 1.25rem 0 1.5rem; display: grid; gap: 1rem; }
+.steps li { counter-increment: step; position: relative; margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.35rem 1.35rem 1.2rem 3.9rem; }
+.steps li::before { content: counter(step); position: absolute; left: 1.35rem; top: 1.35rem; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: var(--radius-pill); background: var(--fg); color: var(--bg); font-family: var(--font-heading); font-weight: 700; font-size: 0.9rem; }
+.steps h3 { margin: 0 0 0.35rem; }
+.steps p { margin: 0; color: var(--muted); font-size: 0.97rem; }
+@media (max-width: 480px) { .steps li { padding: 3.4rem 1.15rem 1.1rem; } }
+
+/* Contact — le seul endroit du site qui appelle vraiment à l'action */
+.contact-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: clamp(1.5rem, 4vw, 2.5rem); margin-top: 1.25rem; }
+.contact-panel h2 { margin-top: 0; }
+.contact-panel h3 { font-size: 1rem; margin-top: 2rem; }
+.contact-panel .cta-row { margin-bottom: 0.75rem; }
+.contact-panel .meta { margin-bottom: 0; }
+.checklist { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; gap: 0.45rem; font-size: 0.95rem; color: var(--muted); }
+.checklist li { position: relative; margin: 0; padding-left: 1.4rem; }
+.checklist li::before { content: "—"; position: absolute; left: 0; }
