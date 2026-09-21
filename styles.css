@@ -27,11 +27,6 @@ header.top { display: flex; flex-wrap: wrap; align-items: center; justify-conten
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--font-heading); font-weight: 700; font-size: 1.15rem; text-decoration: none; }
 .brand img { width: 36px; height: 36px; border-radius: 10px; filter: brightness(0); }
 @media (prefers-color-scheme: dark) { .brand img { filter: brightness(0) invert(1); } }
-/* Pages d'un PRODUIT (Maurice) : l'icône est celle de l'app, pas la marque de
-   l'éditeur. Elle porte déjà son fond, donc pas de teinture — `brightness(0)`
-   suivi d'`invert(1)` en sombre la réduirait à un carré plein. */
-.brand--app img, .brand--app:hover img { filter: none; }
-@media (prefers-color-scheme: dark) { .brand--app img { filter: none; } }
 nav.top-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.95rem; }
 nav.top-links a { text-decoration: none; color: var(--muted); }
 nav.top-links a:hover { color: var(--fg); }
