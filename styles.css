@@ -143,3 +143,15 @@ footer.bottom a { color: var(--muted); }
 .offer > p:last-child { margin-bottom: 0; }
 /* Repoussée en bas de carte pour que les mentions s'alignent entre colonnes. */
 .offer-flag { margin-top: auto; padding-top: 0.9rem; border-top: 1px solid var(--border); font-size: 0.88rem; }
+
+/* Pied de page — un plan du site plutôt qu'une file de liens : les deux
+   mondes (le studio, l'app Maurice) sont nommés et séparés. */
+.site-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, max-content)); gap: 1.5rem 4rem; margin-bottom: 1.5rem; }
+.site-map-head { font-family: var(--font-heading); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg); margin: 0 0 0.6rem; }
+.site-map ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
+.site-map li { margin: 0; }
+.site-map a { text-decoration: none; }
+.site-map a:hover { text-decoration: underline; }
+
+/* Champ légal encore vide : doit sauter aux yeux tant qu'il l'est. */
+.todo { background: repeating-linear-gradient(45deg, var(--surface-muted), var(--surface-muted) 6px, transparent 6px, transparent 12px); color: var(--fg); border: 1px dashed var(--muted); border-radius: var(--radius-md); padding: 0.1rem 0.5rem; font-size: 0.9rem; }
