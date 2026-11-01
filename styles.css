@@ -1,15 +1,18 @@
-/* Gabin — site du studio. Palette « Noir & Blanc doux » héritée de Maurice
-   (src/theme/tokens.json de l'app) : le studio et ses apps partagent la même. */
+/* Gabin — site du studio. Direction artistique « Onyx · Indigo · Mint » :
+   fond quasi noir, aplat indigo électrique pour les moments forts, menthe
+   tropicale réservée à l'action. Titres en capitales condensées, contrepoint
+   en serif italique. Thème sombre unique, assumé. */
 :root {
-  --bg: #FAFAFA; --surface: #FFFFFF; --surface-muted: #F4F4F4;
-  --fg: #0A0A0A; --muted: #707070; --border: #E2E2E2;
+  --onyx: #01010D; --indigo: #6331FB; --mint: #88F9C0;
+  --bg: var(--onyx); --surface: #0D0B22; --surface-muted: #15123A;
+  --fg: #F4F2FF; --muted: #A5A0C8; --border: #26214F;
+  --accent: var(--indigo); --action: var(--mint); --on-action: var(--onyx);
   --radius-md: 12px; --radius-lg: 16px; --radius-xl: 24px; --radius-pill: 999px;
-  --font-heading: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-body: 'Noto Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  color-scheme: light dark;
-}
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #0A0A0A; --surface: #141414; --surface-muted: #1C1C1C; --fg: #FAFAFA; --muted: #9A9A9A; --border: #2A2A2A; }
+  --font-display: 'Anton', 'Impact', 'Arial Narrow', sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-heading: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -25,8 +28,7 @@ p { margin: 0 0 1em; }
 .wrap--narrow { width: min(100% - 2.5rem, 720px); }
 header.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; padding-block: 1.25rem; }
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--font-heading); font-weight: 700; font-size: 1.15rem; text-decoration: none; }
-.brand img { width: 36px; height: 36px; border-radius: 10px; filter: brightness(0); }
-@media (prefers-color-scheme: dark) { .brand img { filter: brightness(0) invert(1); } }
+.brand img { width: 36px; height: 36px; border-radius: 10px; filter: brightness(0) invert(1); }
 nav.top-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.95rem; }
 nav.top-links a { text-decoration: none; color: var(--muted); }
 nav.top-links a:hover { color: var(--fg); }
@@ -152,3 +154,77 @@ footer.bottom a { color: var(--muted); }
 
 /* Champ légal encore vide : doit sauter aux yeux tant qu'il l'est. */
 .todo { background: repeating-linear-gradient(45deg, var(--surface-muted), var(--surface-muted) 6px, transparent 6px, transparent 12px); color: var(--fg); border: 1px dashed var(--muted); border-radius: var(--radius-md); padding: 0.1rem 0.5rem; font-size: 0.9rem; }
+
+/* ——— Direction artistique Onyx · Indigo · Mint ——— */
+::selection { background: var(--mint); color: var(--onyx); }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-transform: uppercase; letter-spacing: 0; line-height: 0.95; }
+h1 { font-size: clamp(2.6rem, 8vw, 4.5rem); }
+h2 { font-size: clamp(2rem, 5.5vw, 3rem); margin-top: 4.5rem; }
+h3 { font-family: var(--font-heading); font-weight: 600; letter-spacing: -0.01em; }
+.brand { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.02em; }
+nav.top-links a { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.eyebrow { font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.16em; color: var(--mint); }
+.lead { color: var(--muted); }
+
+/* Boutons : la menthe est la seule couleur qui appelle à l'action. */
+.btn { font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; border-width: 1.5px; transition: transform 0.15s, background 0.15s; }
+.btn--primary { background: var(--mint); color: var(--on-action); border-color: var(--mint); }
+.btn--primary:hover { transform: translateY(-1px); background: #a6fbd2; }
+.btn--ghost { color: var(--fg); border-color: rgba(244, 242, 255, 0.55); }
+.btn--ghost:hover { border-color: var(--fg); }
+.btn--disabled { color: var(--muted); border-color: var(--border); }
+
+/* Cartes : surfaces violacées, liseré indigo au survol. */
+.card, .offer, .steps li, .app-card, .contact-panel { background: var(--surface); border-color: var(--border); }
+.card { transition: border-color 0.15s; }
+.card:hover, .app-card:hover { border-color: var(--indigo); }
+.steps li::before { background: var(--indigo); color: #fff; }
+.offer--feature { border-color: var(--mint); box-shadow: 0 0 0 1px var(--mint) inset; }
+.offer .price { font-family: var(--font-display); font-weight: 400; font-size: clamp(2rem, 5vw, 2.6rem); letter-spacing: 0.01em; }
+.offer .price small, .price-from { font-family: var(--font-heading); }
+.price-from { color: var(--mint); }
+.note { background: var(--surface-muted); color: var(--muted); border-left: 3px solid var(--indigo); }
+.note strong { color: var(--fg); }
+.shots-dot.is-active { background: var(--mint); }
+.shots img { border-color: var(--border); }
+.hero-grid img { box-shadow: 0 24px 70px rgba(99, 49, 251, 0.45); }
+.site-map-head { color: var(--mint); }
+footer.bottom { border-top-color: var(--border); }
+.contact-panel { background: radial-gradient(120% 140% at 100% 0%, rgba(99, 49, 251, 0.55), transparent 60%), var(--surface); border-color: rgba(99, 49, 251, 0.6); }
+.checklist li::before { color: var(--mint); }
+
+/* Contrepoint typographique : la serif italique répond aux capitales. */
+.t-block { display: block; font-family: var(--font-display); font-weight: 400; text-transform: uppercase; line-height: 0.86; }
+.t-serif { display: block; font-family: var(--font-serif); font-style: italic; font-weight: 400; text-transform: none; line-height: 0.9; letter-spacing: -0.01em; }
+
+/* Hero « affiche » de l'accueil : un aplat indigo, les mots de part et
+   d'autre d'un téléphone, la liste des engagements à droite. */
+.poster { position: relative; isolation: isolate; overflow: hidden; margin-top: 0.5rem; margin-inline: calc(50% - min(50vw - 1rem, 600px)); padding: clamp(1.5rem, 4vw, 2.75rem); border-radius: var(--radius-xl); background:
+  radial-gradient(60% 70% at 50% 45%, rgba(136, 249, 192, 0.18), transparent 70%),
+  radial-gradient(90% 90% at 50% 100%, #1a0b5c 0%, transparent 70%),
+  linear-gradient(160deg, #7444ff 0%, var(--indigo) 45%, #3a14b8 100%); }
+.poster .eyebrow { color: rgba(255, 255, 255, 0.85); }
+.poster-stage { position: relative; display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 1rem; margin-block: 1rem 2rem; }
+.poster-title { display: contents; color: #fff; margin: 0; }
+.poster-left { grid-column: 1; grid-row: 1; align-self: start; position: relative; z-index: 2; }
+.poster-right { grid-column: 3; grid-row: 1; align-self: end; text-align: right; position: relative; z-index: 2; }
+.poster .t-block { font-size: clamp(3rem, 6.4vw, 6.6rem); white-space: nowrap; }
+.poster .t-serif { white-space: nowrap; }
+.poster .t-serif { font-size: clamp(2.2rem, 4.8vw, 4.6rem); }
+.poster-phone { grid-column: 2; grid-row: 1; margin: 0; width: clamp(150px, 20vw, 230px); padding: 0; overflow: hidden; border-radius: 30px; background: var(--onyx); box-shadow: 0 30px 80px rgba(1, 1, 13, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12); transform: rotate(-4deg); }
+.poster-phone img { filter: saturate(0.9); }
+.poster-foot { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem 3rem; align-items: end; }
+.poster .lead { color: rgba(255, 255, 255, 0.86); font-size: 1.05rem; max-width: 44ch; }
+.poster .btn--ghost { color: #fff; border-color: rgba(255, 255, 255, 0.6); }
+.poster-facts { list-style: none; margin: 0; padding: 0; justify-self: end; min-width: 220px; }
+.poster-facts li { margin: 0; padding: 0.55rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.28); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; }
+.poster-tools { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem 1.75rem; margin: 2.25rem 0 0; color: #fff; font-family: var(--font-display); text-transform: uppercase; font-size: 1.15rem; letter-spacing: 0.04em; }
+.poster-tools-head { flex-basis: 100%; text-align: center; font-family: var(--font-heading); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.25em; color: rgba(255, 255, 255, 0.7); }
+@media (max-width: 720px) {
+  .poster-stage { grid-template-columns: 1fr; gap: 1.25rem; }
+  .poster-left, .poster-right, .poster-phone { grid-column: 1; grid-row: auto; }
+  .poster-phone { justify-self: center; order: 2; width: 170px; }
+  .poster-right { order: 3; }
+  .poster-foot { grid-template-columns: 1fr; }
+  .poster-facts { justify-self: stretch; }
+}
