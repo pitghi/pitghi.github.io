@@ -165,7 +165,7 @@
   // est ralenti d'un même facteur pour laisser le temps de lire.
   var SLOW = 1.2;
   function slow(t) { return t * SLOW; }
-  var PH = [0, 8.4, 12.05, 15.45].map(slow), END = slow(20.45), SHOW = [8.3, 11.8, 15.35, 20.45].map(slow);
+  var PH = [0, 8.4, 12.05, 15.45].map(slow), END = slow(21.0), SHOW = [8.3, 11.8, 15.35, 21.0].map(slow);
   var EO = 'cubic-bezier(.16, 1, .3, 1)', EIO = 'cubic-bezier(.65, 0, .35, 1)', EIN = 'cubic-bezier(.55, 0, .8, .25)';
   var POP = 'cubic-bezier(.34, 1.56, .64, 1)', DRAW = 'cubic-bezier(.45, .05, .25, 1)';
 
@@ -521,16 +521,18 @@
     updateRail();
     var k = blend(T), t = (now - clock0) / 1000, idle = reduce ? 0 : 1;
     px_ += (tx - px_) * 0.06; py_ += (ty - py_) * 0.06;
-    var ry = k * (-20 + idle * (Math.sin(t * 0.45) * 16 + px_ * 18 + scrollF * 50));
-    var rx = k * (7 + idle * (Math.sin(t * 0.7) * 3 - py_ * 10 + scrollF * 18));
-    var rz = k * (2 + idle * Math.sin(t * 0.4) * 1.5);
-    var fy = k * idle * (Math.sin(t * 0.9) * 9 - scrollF * 40);
+    // Lévitation continue : deux houles mêlées pour la hauteur, un balancement
+    // ample en lacet, de petits roulis ; jamais immobile, même après l'intro.
+    var ry = k * (-18 + idle * (Math.sin(t * 0.33) * 20 + Math.sin(t * 0.71) * 4 + px_ * 18 + scrollF * 50));
+    var rx = k * (6 + idle * (Math.sin(t * 0.6) * 4 - py_ * 10 + scrollF * 18));
+    var rz = k * (1.5 + idle * Math.sin(t * 0.42) * 2.6);
+    var fy = k * idle * (Math.sin(t * 0.8) * 13 + Math.sin(t * 0.37) * 5 - scrollF * 40);
     device.style.setProperty('--ry', ry.toFixed(2) + 'deg');
     device.style.setProperty('--rx', rx.toFixed(2) + 'deg');
     device.style.setProperty('--rz', rz.toFixed(2) + 'deg');
     device.style.setProperty('--fy', fy.toFixed(1) + 'px');
     device.style.setProperty('--gx', (50 + ry * 1.6).toFixed(1) + '%');
-    E.shadow.style.setProperty('--ss', (1 - (fy + 9) / 60).toFixed(3));
+    E.shadow.style.setProperty('--ss', (1 - (fy + 18) / 80).toFixed(3));
     requestAnimationFrame(frame);
   }
   function loop() { if (!looping && visible) { looping = true; requestAnimationFrame(frame); } }
