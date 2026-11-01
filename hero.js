@@ -3,7 +3,7 @@
    1. Croquis : trois écrans de Maurice se dessinent au crayon. Un doigt
       dessiné tape « Carte » puis « Dépenses » : le prototype papier vit déjà.
    2. Cadrage : les fiches se rangent en parcours, le trait menthe trace le
-      périmètre de la V1, le « chat de groupe » est barré et sort du cadre.
+      périmètre de la V1 et chaque écran retenu reçoit son étiquette.
    3. Développement : un balayage fait passer l'écran du croquis au fil de
       fer, puis chaque ligne de code change un bloc en vrai composant.
    4. Stores : le téléphone se construit autour de l'écran, la notification
@@ -124,7 +124,7 @@
       arrows: [[402, 168, 318, 190], [598, 168, 682, 190]],
       frame: [140, 4, 720, 432, 26],
       stamp: [186, 26, -12],
-      postIn: [642, 362, 4, 1], postOut: [920, 330, 9, 1], later: [920, 400, -5, 1],
+      keep: [[500, 412], [238, 383], [762, 383]],
       code: [40, 80], badge: [614, 30],
       fingerIn: [740, 540], fingerOut: [780, 560],
       pop: { z: 110, s: 1.4, y: -5 },
@@ -143,10 +143,10 @@
       outL: [80, 128, -4, .5], outR: [215, 128, 4, .5],
       rowL: [80, 130, -2, .5], rowR: [215, 132, 2, .5],
       exitL: [-90, 70, -16, .5], exitR: [460, 70, 16, .5],
-      arrows: [[148, 252, 84, 222], [212, 252, 214, 224]],
+      arrows: [[150, 254, 96, 238], [210, 254, 200, 240]],
       frame: [14, 26, 278, 600, 22],
       stamp: [42, 28, -12],
-      postIn: [147, 128, 4, 1], postOut: [326, 150, 9, 1], later: [326, 204, -6, 1],
+      keep: [[180, 596], [80, 217], [215, 219]],
       code: [8, 6], badge: [8, 224],
       fingerIn: [330, 720], fingerOut: [350, 740],
       pop: { z: 100, s: 1.7, y: -6 },
@@ -158,7 +158,7 @@
       ]
     }
   };
-  var PH = [0, 4.1, 7.2, 11.1], END = 16.0, SHOW = [4.05, 7.17, 10.98, END];
+  var PH = [0, 4.1, 7.2, 11.1], END = 16.1, SHOW = [4.05, 7.17, 10.98, END];
   var EO = 'cubic-bezier(.16, 1, .3, 1)', EIO = 'cubic-bezier(.65, 0, .35, 1)', EIN = 'cubic-bezier(.55, 0, .8, .25)';
   var POP = 'cubic-bezier(.34, 1.56, .64, 1)', DRAW = 'cubic-bezier(.45, .05, .25, 1)';
 
@@ -171,7 +171,7 @@
     intro: q('[data-intro]'), live: q('[data-live]'), sketch: q('[data-sketch]'), wire: q('[data-wire]'),
     scan: q('[data-scan]'), reals: qa('[data-real]'), flashes: qa('[data-flash]'),
     cardL: q('[data-card="carte"]'), cardR: q('[data-card="depenses"]'),
-    ink: q('[data-ink]'), postit: q('[data-postit]'), later: q('[data-later]'), stamp: q('[data-stamp]'),
+    ink: q('[data-ink]'), keeps: qa('[data-keep]'), stamp: q('[data-stamp]'),
     code: q('[data-code]'), lines: qa('[data-line]'), badge: q('[data-badge]'),
     strip: q('[data-strip]'), noteInk: q('[data-note-ink]'), notes: qa('[data-note]'),
     finger: q('[data-finger]'), ring: q('[data-ring]')
@@ -312,21 +312,21 @@
     /* — 2. Cadrage — */
     add(E.cardL, [{ transform: tf(P.outL) }, { transform: tf(P.rowL) }], 4.1, .65, EO);
     add(E.cardR, [{ transform: tf(P.outR) }, { transform: tf(P.rowR) }], 4.16, .65, EO);
-    add(E.postit, [{ opacity: 0, transform: tf([P.postIn[0], P.postIn[1] - 10, 16, 1.4]) }, { opacity: 1, transform: tf(P.postIn) }], 4.42, .45, POP);
     ink.arrows.forEach(function (a, i) { draw(a[0], 4.66 + i * .16, .38, DRAW); draw(a[1], 4.98 + i * .16, .16, 'ease-out'); });
     draw(ink.frame, 5.02, .85, EIO);
     var st = P.stamp;
     add(E.stamp, [{ opacity: 0, transform: tf([st[0], st[1], st[2] - 8, 2.3]) }, { opacity: 1, transform: tf([st[0], st[1], st[2], .94]), offset: .75 }, { opacity: 1, transform: tf([st[0], st[1], st[2], 1]) }], 5.74, .3, 'cubic-bezier(.5, 0, .3, 1)');
     [E.cardL, E.cardR].forEach(function (c) { add(c, [{ rotate: '0deg' }, { rotate: '-1deg', offset: .3 }, { rotate: '.6deg', offset: .65 }, { rotate: '0deg' }], 5.92, .32, 'ease-out'); });
-    qa('path', E.postit).forEach(function (p, i) { draw(p, 5.98 + i * .18, .2, EIO); });
-    var mid = [(P.postIn[0] + P.postOut[0]) / 2, Math.min(P.postIn[1], P.postOut[1]) - 18, 10, 1.08];
-    add(E.postit, [{ transform: tf(P.postIn) }, { transform: tf(mid), offset: .45 }, { transform: tf(P.postOut) }], 6.32, .6, EIO);
-    E.later.style.transform = tf(P.later);
-    add(E.later, [{ opacity: 0 }, { opacity: 1 }], 6.68, .05);
-    wipe(E.later, 6.7, .45);
+    // Ce que garde la V1 : une étiquette par écran retenu, dans l'ordre du parcours.
+    P.keep.forEach(function (k, i) {
+      var el = E.keeps[i], at = 6.0 + i * .22;
+      add(el, [{ opacity: 0, transform: tf([k[0], k[1] + 6, 0, .4]) }, { opacity: 1, transform: tf([k[0], k[1], 0, 1]) }], at, .45, POP);
+      draw(qa('path', el), at + .18, .28, EIO);
+    });
+    add(ink.frame, [{ strokeWidth: 3 }, { strokeWidth: 6, offset: .45 }, { strokeWidth: 3 }], 6.8, .55, 'ease-in-out');
 
     /* — 3. Développement — */
-    [E.postit, E.later, E.stamp, E.ink].forEach(function (el) { add(el, [{ opacity: 1 }, { opacity: 0 }], 7.2, .4, EO); });
+    [E.stamp, E.ink].concat(E.keeps).forEach(function (el) { add(el, [{ opacity: 1 }, { opacity: 0 }], 7.2, .4, EO); });
     add(E.cardL, [{ transform: tf(P.rowL) }, { transform: tf(P.exitL) }], 7.2, .65, EIN);
     add(E.cardR, [{ transform: tf(P.rowR) }, { transform: tf(P.exitR) }], 7.24, .65, EIN);
     add(E.cardL, [{ opacity: 1 }, { opacity: 0 }], 7.45, .4);
@@ -378,7 +378,8 @@
     add(E.notif, [{ opacity: 0, transform: 'translateY(-45%) translateZ(2px) scale(.94)' }, { opacity: 1, transform: inScreen }], 12.35, .5, 'cubic-bezier(.2, 1.25, .4, 1)');
     add(E.notif, [{ transform: inScreen, boxShadow: '0 ' + px(4) + ' ' + px(10) + ' rgba(1, 1, 13, .22)' }, { transform: out, boxShadow: '0 ' + px(26) + ' ' + px(48) + ' rgba(1, 1, 13, .45)' }], 12.95, .75, 'cubic-bezier(.22, 1.45, .4, 1)');
     draw(E.mint, 12.7, .6, EIO);
-    E.chips.forEach(function (c, i) { add(c, [{ opacity: 0, scale: .6 }, { opacity: 1, scale: 1 }], 13.3 + i * .2, .5, POP); });
+    // Les cartes flottantes n'arrivent qu'une fois la notification partie.
+    E.chips.forEach(function (c, i) { add(c, [{ opacity: 0, scale: .6 }, { opacity: 1, scale: 1 }], 15.35 + i * .15, .45, POP); });
     add(E.notif, [{ opacity: 1, transform: out }, { opacity: 0, transform: 'translateY(' + (pop.y - 60) + '%) translateZ(' + px(pop.z + 40) + ') scale(' + pop.s + ')' }], 15.4, .45, EIN);
     add(E.live, [{ opacity: 0 }, { opacity: 1 }], 15.75, .05);
     add(E.intro, [{ opacity: 1 }, { opacity: 0 }], 15.8, .15);
