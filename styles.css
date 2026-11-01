@@ -251,7 +251,7 @@ footer.bottom { border-top-color: var(--border); }
 .stage-ink path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; }
 .ink-arrow { stroke: #fff; stroke-width: 2.4; }
 .ink-frame { stroke: var(--mint); stroke-width: 3; }
-.stamp { translate: -50% -50%; padding: .08em .42em .02em; border: .09em solid var(--mint); border-radius: .18em; color: var(--mint); font-family: var(--font-display); font-size: calc(var(--post) * .44); line-height: 1; letter-spacing: .04em; opacity: 0; z-index: 6; }
+.stamp { translate: -50% -50%; padding: .08em .42em .02em; border: .09em solid var(--mint); border-radius: .18em; color: var(--mint); font-family: var(--font-display); font-size: calc(var(--post) * .3); line-height: 1; letter-spacing: .04em; white-space: nowrap; opacity: 0; z-index: 6; }
 
 /* Ce que garde la V1 : une étiquette turquoise sur chaque écran retenu */
 .keep { translate: -50% -50%; display: inline-flex; align-items: center; gap: .35em; margin: 0; padding: .32em .75em .32em .55em; border-radius: 999px; background: var(--mint); color: var(--onyx); font-family: var(--font-heading); font-weight: 700; font-size: 1.3cqw; line-height: 1.1; white-space: nowrap; box-shadow: 0 .5cqw 1.4cqw rgba(1, 1, 13, .35); opacity: 0; z-index: 6; }
