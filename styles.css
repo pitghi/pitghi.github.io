@@ -235,18 +235,33 @@ footer.bottom { border-top-color: var(--border); }
    à réduire les animations. */
 .device-scene { --w: clamp(200px, 19vw, 250px); grid-column: 2; grid-row: 1; position: relative; width: var(--w); perspective: 1300px; animation: scene-in 1.6s cubic-bezier(.16, 1, .3, 1) .15s both; }
 .device { --rx: 8deg; --ry: -18deg; --rz: 2deg; --fy: 0px; --gx: 50%; position: relative; transform-style: preserve-3d; transform: translateY(var(--fy)) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz)); will-change: transform; }
-.device-body { position: relative; aspect-ratio: 9 / 19.2; transform-style: preserve-3d; --r: 17% / 8.1%; }
+.device-body { position: relative; transform-style: preserve-3d; --r: 17% / 7.8%; }
 .device-edge { position: absolute; inset: 0; border-radius: var(--r); background: linear-gradient(90deg, #1b1740, #6a5cc9 18%, #2b2560 50%, #6a5cc9 82%, #1b1740); transform: translateZ(calc(var(--z) * 1.4px)); }
 .device-back { position: absolute; inset: 0; border-radius: var(--r); display: grid; place-items: center; background: radial-gradient(80% 60% at 30% 20%, #3b2a9a, #140d45 70%); transform: translateZ(-15px) rotateY(180deg); backface-visibility: hidden; }
 .device-back span { font-family: var(--font-display); font-size: calc(var(--w) * .28); color: rgba(255, 255, 255, .18); }
 .device-buttons i { position: absolute; left: -2px; width: 3px; border-radius: 2px; background: #6a5cc9; transform: translateZ(-6px) rotateY(-90deg); }
 .device-buttons i:nth-child(1) { top: 17%; height: 4%; } .device-buttons i:nth-child(2) { top: 24%; height: 8%; } .device-buttons i:nth-child(3) { top: 34%; height: 8%; }
-.device-front { position: absolute; inset: 0; padding: 3.4%; border-radius: var(--r); background: #04030f; transform: translateZ(1px); box-shadow: inset 0 0 0 1.5px rgba(160, 140, 255, .55), inset 0 0 0 4px #04030f, inset 0 0 0 5px rgba(255, 255, 255, .08); }
-.device-screen { position: relative; height: 100%; overflow: hidden; border-radius: 14% / 6.4%; background: #fff; }
-.device-screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transform: translateX(100%); transition: transform .75s cubic-bezier(.7, 0, .18, 1), filter .75s; z-index: 1; }
-.device-screen img.is-active { transform: translateX(0); z-index: 2; box-shadow: -18px 0 30px rgba(0, 0, 0, .18); }
-.device-screen img.is-leaving { transform: translateX(-30%); filter: brightness(.82); z-index: 1; }
-.device-tap { position: absolute; z-index: 3; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: rgba(99, 49, 251, .35); border: 2px solid rgba(99, 49, 251, .8); opacity: 0; pointer-events: none; }
+.device-front { position: relative; padding: 3.6%; border-radius: var(--r); background: #04030f; transform: translateZ(1px); box-shadow: inset 0 0 0 1.5px rgba(160, 140, 255, .55), inset 0 0 0 4px #04030f, inset 0 0 0 5px rgba(255, 255, 255, .08); }
+.device-screen { position: relative; aspect-ratio: 920 / 2000; overflow: hidden; border-radius: 13.5% / 6.2%; background: #eef1f4; container-type: inline-size; }
+.screen-base { position: absolute; inset: 0; width: 100%; height: 100%; }
+.screen-island { position: absolute; z-index: 4; top: 1.25%; left: 50%; width: 31%; height: 4.1%; margin-left: -15.5%; border-radius: 999px; background: #000; }
+/* Barre d'onglets reconstruite en HTML (mêmes cotes que l'app) : la pastille
+   glisse d'un onglet à l'autre et la barre défile, comme dans Maurice. */
+.tabbar { position: absolute; z-index: 2; left: 6.3%; width: 87.4%; top: 34.3%; height: 5.55%; overflow: hidden; border-radius: 3.3cqw; background: #F8FAFA; font-family: 'Noto Sans', system-ui, -apple-system, sans-serif; }
+.tabbar::before, .tabbar::after { position: absolute; z-index: 2; top: 0; bottom: 0; width: 11cqw; display: flex; align-items: center; font-size: 4.2cqw; color: #222; transition: opacity .35s; pointer-events: none; }
+.tabbar::before { content: "‹"; left: 0; padding-left: 2cqw; background: linear-gradient(90deg, #F8FAFA 22%, rgba(248, 250, 250, 0)); opacity: 0; }
+.tabbar::after { content: "›"; right: 0; justify-content: flex-end; padding-right: 2cqw; background: linear-gradient(270deg, #F8FAFA 22%, rgba(248, 250, 250, 0)); }
+.tabbar.is-scrolled::before { opacity: 1; } .tabbar.is-scrolled::after { opacity: 0; }
+.tabbar-track { position: absolute; top: 0; left: 0; height: 100%; display: flex; align-items: center; padding-inline: .7cqw; white-space: nowrap; transform: translateX(var(--tx, 0px)); transition: transform .55s cubic-bezier(.65, 0, .25, 1); }
+.tab { position: relative; z-index: 1; padding: 0 3.75cqw; font-size: 3.25cqw; line-height: 1; color: #707070; transition: color .3s; }
+.tab:first-of-type { padding-inline: 2.6cqw; }
+.tab.is-active { color: #0A0A0A; font-weight: 600; }
+.tab-pill { position: absolute; top: 9%; height: 82%; left: 0; width: var(--pw, 0px); border-radius: 2.4cqw; background: #fff; box-shadow: 0 .3cqw 1cqw rgba(0, 0, 0, .05); transform: translateX(var(--px, 0px)); transition: transform .5s cubic-bezier(.34, 1.3, .5, 1), width .5s cubic-bezier(.34, 1.3, .5, 1); }
+.tab-panels { position: absolute; z-index: 1; left: 0; right: 0; top: 39.85%; bottom: 0; overflow: hidden; }
+.tab-panel { position: absolute; top: 0; left: 0; width: 100%; height: auto; opacity: 0; transform: translateX(var(--from, 6%)); transition: opacity .14s ease, transform .2s ease; }
+.tab-panel.is-active { opacity: 1; transform: none; transition: opacity .3s ease .12s, transform .5s cubic-bezier(.16, 1, .3, 1) .12s; }
+.tab-panel.is-leaving { opacity: 0; transform: translateX(var(--to, -4%)); }
+.device-tap { position: absolute; z-index: 5; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: rgba(99, 49, 251, .35); border: 2px solid rgba(99, 49, 251, .8); opacity: 0; pointer-events: none; }
 .device-tap.is-tapping { animation: tap .6s ease-out both; }
 .device-glare { position: absolute; inset: 0; border-radius: var(--r); pointer-events: none; background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .28) 46%, rgba(255, 255, 255, .06) 52%, transparent 62%); background-size: 300% 100%; background-position: var(--gx) 0; mix-blend-mode: screen; }
 .device-glow { position: absolute; inset: 10% -40%; border-radius: 50%; background: radial-gradient(closest-side, rgba(136, 249, 192, .55), rgba(136, 249, 192, 0) 70%); filter: blur(30px); animation: glow 6s ease-in-out infinite; z-index: -1; }
@@ -261,7 +276,7 @@ footer.bottom { border-top-color: var(--border); }
 .chip--a b, .chip--a small { grid-column: 1; }
 .chip--a::before { content: ""; position: absolute; left: -4px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgba(136, 249, 192, .25); }
 .chip--b { --cz: 55px; top: 48%; right: -50%; animation-delay: 1.35s, 1.6s; }
-.chip-check { grid-row: span 2; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--mint); color: var(--onyx); font-weight: 700; font-size: .8rem; }
+.chip-check { grid-row: span 2; font-family: var(--font-heading); display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--mint); color: var(--onyx); font-weight: 700; font-size: .8rem; }
 .chip--c { --cz: 110px; bottom: 9%; left: -38%; animation-delay: 1.6s, 2.2s; }
 .chip-avatars { display: flex; }
 .chip-avatars i { display: grid; place-items: center; width: 22px; height: 22px; margin-left: -6px; border-radius: 50%; border: 2px solid #04030f; background: var(--indigo); font-style: normal; font-size: .62rem; font-weight: 700; }
@@ -291,5 +306,5 @@ footer.bottom { border-top-color: var(--border); }
 }
 @media (prefers-reduced-motion: reduce) {
   .device-scene, .chip, .device-glow, .poster-title .t-block, .poster-title .t-serif, .poster-foot, .poster-tools, .poster-facts li { animation: none !important; }
-  .device-screen img { transition: none; }
+  .tab-panel, .tab-pill, .tabbar-track { transition: none !important; }
 }

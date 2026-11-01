@@ -14,7 +14,7 @@
   <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -45,20 +45,29 @@
                 <div class="device-back"><span>m</span></div>
                 <div class="device-buttons"><i></i><i></i><i></i></div>
                 <div class="device-front">
-                  <div class="device-screen" data-screens>
-                    <img class="is-active" src="assets/ecrans/ecran-1.jpg" alt="" width="358" height="779">
-                    <img src="assets/ecrans/ecran-2.jpg" alt="" width="358" height="779" loading="lazy">
-                    <img src="assets/ecrans/ecran-4.jpg" alt="" width="358" height="779" loading="lazy">
-                    <img src="assets/ecrans/ecran-5.jpg" alt="" width="358" height="779" loading="lazy">
-                    <img src="assets/ecrans/ecran-6.jpg" alt="" width="358" height="779" loading="lazy">
+                  <div class="device-screen" data-screen>
+                    <img class="screen-base" src="assets/ecrans/base.jpg" alt="" width="480" height="1043">
+                    <div class="screen-island"></div>
+                    <div class="tabbar" data-tabbar>
+                      <div class="tabbar-track" data-track>
+                        <span class="tab-pill" data-pill></span>
+                        <span class="tab is-active">Étapes (17)</span><span class="tab">Carte</span><span class="tab">Carnet</span><span class="tab">Listes</span><span class="tab">Notes</span><span class="tab">Dépenses</span><span class="tab">Lexique</span><span class="tab">Infos</span>
+                      </div>
+                    </div>
+                    <div class="tab-panels">
+                      <img class="tab-panel is-active" data-tab="0" src="assets/ecrans/onglet-etapes.jpg" alt="" width="480" height="628">
+                      <img class="tab-panel" data-tab="1" src="assets/ecrans/onglet-carte.jpg" alt="" width="480" height="628">
+                      <img class="tab-panel" data-tab="5" src="assets/ecrans/onglet-depenses.jpg" alt="" width="480" height="628">
+                      <img class="tab-panel" data-tab="6" src="assets/ecrans/onglet-lexique.jpg" alt="" width="480" height="628">
+                    </div>
                     <div class="device-tap"></div>
                   </div>
                   <div class="device-glare"></div>
                 </div>
               </div>
-              <div class="chip chip--a"><b>Paris → Turin</b><small>674 km · 7 h 48</small></div>
-              <div class="chip chip--b"><span class="chip-check">✓</span><b>Checklist</b><small>3 / 8 cochés</small></div>
-              <div class="chip chip--c"><span class="chip-avatars"><i>A</i><i>S</i><i>C</i></span><b>3 compagnons</b></div>
+              <div class="chip chip--a"><b>Paris → Pollein</b><small>674 km · 7 h 48</small></div>
+              <div class="chip chip--b"><span class="chip-check">€</span><b>On te doit 25 €</b><small>Jérôme → Paul</small></div>
+              <div class="chip chip--c"><span class="chip-avatars"><i>P</i><i>J</i></span><b>17 étapes · 5 133 km</b></div>
             </div>
             <div class="device-shadow"></div>
           </div>

@@ -12,40 +12,76 @@
   var shadow = scene.querySelector('.device-shadow');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ——— Parcours dans l'app : où l'on « tape » sur chaque écran pour aller au suivant (en % de l'écran) ——— */
-  var screens = Array.prototype.slice.call(device.querySelectorAll('[data-screens] img'));
+  /* ——— Parcours dans l'app : on passe d'un onglet à l'autre, comme dans
+     Maurice. Seuls la barre d'onglets et le contenu changent ; l'en-tête du
+     voyage reste en place. ——— */
+  var screen = device.querySelector('[data-screen]');
+  var bar = device.querySelector('[data-tabbar]');
+  var track = device.querySelector('[data-track]');
+  var pill = device.querySelector('[data-pill]');
+  var tabs = Array.prototype.slice.call(track.querySelectorAll('.tab'));
+  var panels = {};
+  Array.prototype.forEach.call(device.querySelectorAll('[data-tab]'), function (el) { panels[el.getAttribute('data-tab')] = el; });
   var tap = device.querySelector('.device-tap');
-  var taps = [[50, 40], [50, 34], [79, 34], [78, 9], [89, 9]];
-  var current = 0;
+  var route = [0, 1, 5, 6];   // Étapes → Carte → Dépenses → Lexique → Étapes…
+  var step = 0, scrollX = 0;
 
-  function next() {
-    var from = screens[current];
-    var pos = taps[current] || [50, 50];
-    tap.style.left = pos[0] + '%';
-    tap.style.top = pos[1] + '%';
+  function maxScroll() { return Math.max(0, track.scrollWidth - bar.clientWidth); }
+  function setScroll(x) {
+    scrollX = x;
+    track.style.setProperty('--tx', -x + 'px');
+    bar.classList.toggle('is-scrolled', x > 0);
+  }
+  function placePill(i) {
+    var t = tabs[i];
+    pill.style.setProperty('--px', t.offsetLeft + 'px');
+    pill.style.setProperty('--pw', t.offsetWidth + 'px');
+    tabs.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
+  }
+  function tapAt(i) {
+    var t = tabs[i];
+    tap.style.left = (bar.offsetLeft + t.offsetLeft - scrollX + t.offsetWidth / 2) + 'px';
+    tap.style.top = (bar.offsetTop + bar.offsetHeight / 2) + 'px';
     tap.classList.remove('is-tapping');
     void tap.offsetWidth;
     tap.classList.add('is-tapping');
-    setTimeout(function () {
-      current = (current + 1) % screens.length;
-      var to = screens[current];
-      screens.forEach(function (img) { if (img !== from && img !== to) img.classList.remove('is-leaving'); });
-      to.classList.remove('is-leaving');
-      // repositionne l'écran entrant à droite sans transition, puis le fait glisser
-      to.style.transition = 'none';
-      to.classList.remove('is-active');
-      void to.offsetWidth;
-      to.style.transition = '';
-      from.classList.remove('is-active');
-      from.classList.add('is-leaving');
-      to.classList.add('is-active');
-    }, 380);
   }
+  function show(from, to) {
+    var dir = to > from ? 1 : -1;
+    var out = panels[from], inn = panels[to];
+    Object.keys(panels).forEach(function (k) { if (panels[k] !== out && panels[k] !== inn) panels[k].classList.remove('is-leaving'); });
+    out.style.setProperty('--to', (-4 * dir) + '%');
+    out.classList.remove('is-active');
+    out.classList.add('is-leaving');
+    inn.style.transition = 'none';
+    inn.classList.remove('is-leaving');
+    inn.style.setProperty('--from', (6 * dir) + '%');
+    void inn.offsetWidth;
+    inn.style.transition = '';
+    inn.classList.add('is-active');
+  }
+  function next() {
+    var from = route[step];
+    step = (step + 1) % route.length;
+    var to = route[step];
+    // l'onglet visé est-il hors de la barre ? on la fait défiler d'abord
+    var target = to >= 4 ? maxScroll() : 0;
+    var delay = 0;
+    if (target !== scrollX) { setScroll(target); delay = 650; }
+    setTimeout(function () {
+      tapAt(to);
+      setTimeout(function () { placePill(to); show(from, to); }, 160);
+    }, delay);
+  }
+
+  function init() { placePill(0); setScroll(0); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(init); else init();
+  window.addEventListener('resize', function () { setScroll(route[step] >= 4 ? maxScroll() : 0); placePill(route[step]); });
 
   if (reduce) return;
 
   var visible = true;
-  var timer = setInterval(function () { if (visible && !document.hidden) next(); }, 3400);
+  var timer = setInterval(function () { if (visible && !document.hidden) next(); }, 3600);
 
   /* ——— Rotation : repos + pointeur + défilement, lissés ——— */
   var px = 0, py = 0, tx = 0, ty = 0, scroll = 0;
