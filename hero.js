@@ -1,17 +1,16 @@
-/* Hero de l'accueil : « Votre app, du croquis aux stores, sans détour ».
-   Un scénario d'environ 15 s en quatre temps, suivis par la frise sous la scène :
-   1. Croquis : trois écrans de Maurice se dessinent au crayon. Un doigt
-      dessiné tape « Carte » puis « Dépenses » : le prototype papier vit déjà.
-   2. Cadrage : les fiches se rangent en parcours, le trait menthe trace le
-      périmètre de la V1 et chaque écran retenu reçoit son étiquette.
-   3. Développement : un balayage fait passer l'écran du croquis au fil de
-      fer, puis chaque ligne de code change un bloc en vrai composant.
-   4. Stores : le téléphone se construit autour de l'écran, la notification
-      App Store tombe, puis l'app vit (vraie navigation dans Maurice).
-   Tout repose sur l'API Web Animations : le scénario se met en pause hors
-   écran, se rejoue, et la frise permet de revenir à une étape. Si le
-   visiteur a demandé à réduire les animations, on montre l'état final, et
-   la frise affiche chaque étape en image fixe. */
+/* Hero de l'accueil, concept 3 « L'établi » : « Votre app, du croquis aux
+   stores, sans détour », en un seul plan-séquence d'environ 16 s.
+   La caméra glisse sur le bureau du studio, sans coupe :
+   1. Croquis : dans le carnet, trois écrans de Maurice se dessinent ; un doigt
+      tape « Carte » et l'itinéraire se trace. Les croquis s'envolent.
+   2. Cadrage : au tableau, les écrans sont punaisés et reliés ; le trait menthe
+      trace le périmètre de la V1 et chaque écran retenu reçoit son étiquette.
+   3. Développement : le trait menthe file jusqu'à l'ordinateur ; le code
+      s'écrit et chaque ligne allume un bloc du simulateur.
+   4. Stores : le téléphone posé sur le bureau se soulève, le bureau sort du
+      champ, la notification App Store sort de l'écran, puis l'app vit.
+   Même mécanique que le concept 2 (Web Animations, pause hors écran, frise
+   cliquable, image finale fixe si l'on réduit les animations). */
 (function () {
   'use strict';
   var hero = document.querySelector('[data-hero]');
@@ -110,73 +109,57 @@
     return { start: start, stop: stop, reset: reset, layout: layout };
   })();
 
-  /* ——— La mise en scène ———
-     Positions en unités de scène : 1000 × 440 en large, 360 × 640 en étroit.
-     Une fiche = [x du centre, y du centre, rotation, échelle]. */
+  /* ——— La mise en scène : un bureau vu de dessus, une caméra qui le parcourt ———
+     Le monde est en unités de scène (1em = 1 unité, réglé ici). Les postes sont
+     côte à côte en large (la caméra glisse vers la droite) et empilés en étroit
+     (elle descend). Caméra = [instant, X, Y, zoom] : coin haut-gauche visé. */
   var PRESETS = {
     wide: {
       W: 1000,
-      dev: { cx: 500, cy: 220, cyIntro: 220, w: 200 },
-      fanL: [440, 230, -8, .92], fanR: [560, 230, 8, .92],
-      outL: [330, 225, -5, .9], outR: [670, 225, 5, .9],
-      rowL: [238, 222, -2, .8], rowR: [762, 222, 2, .8],
-      exitL: [-90, 235, -14, .8], exitR: [1090, 235, 14, .8],
-      arrows: [[402, 168, 318, 190], [598, 168, 682, 190]],
-      frame: [140, 4, 720, 432, 26],
-      stamp: [186, 26, -12],
-      keep: [[500, 412], [238, 383], [762, 383]],
-      code: [40, 80], badge: [614, 30],
-      fingerIn: [740, 540], fingerOut: [780, 560],
-      pop: { z: 110, s: 1.4, y: -5 },
-      // [apparition, disparition], texte, [x, y, rotation], flèche [x0, y0, x1, y1, courbure]
-      notes: [
-        { t: [2.0, 3.75], text: 'on teste au crayon,\navant le code', at: [790, 58, -3], arrow: [800, 136, 590, 166, -.22] },
-        { t: [5.3, 7.2], text: 'périmètre\nécrit =\nprix ferme', at: [10, 150, -4], arrow: [62, 252, 132, 300, .28] },
-        { t: [9.15, 11.1], text: 'une version à tester\nà chaque jalon', at: [690, 118, -3], arrow: [702, 112, 694, 68, .3] },
-        { t: [13.05, 15.45], text: 'en ligne,\nsous vos comptes', at: [712, 104, -3], arrow: [708, 114, 640, 76, -.2] }
-      ]
+      st: { carnet: [0, 0], tableau: [1250, 0], ordi: [2500, 0], tel: [3700, 0] },
+      desk: [-400, -300, 4720, 1040],
+      dev: { cx: 500, cy: 220, w: 200 },
+      cam: [[0, 0, 0, 1], [.7, 0, 0, 1], [2.0, -105, 64, 1.45], [3.3, -105, 64, 1.45], [4.6, 1200, 0, 1], [6.9, 1200, 0, 1],
+        [8.2, 2500, 0, 1], [9.4, 2520, 0, 1], [10.3, 2900, 30, 1.6], [10.7, 2900, 30, 1.6], [11.7, 3500, 0, 1], [12.3, 3500, 0, 1], [13.6, 4380, 0, 1]],
+      mint: function (b, c) { return 'M' + (b[0] + 600) + ' ' + (b[1] + 230) + ' C' + (b[0] + 820) + ' ' + (b[1] + 400) + ' ' + (c[0] - 260) + ' ' + (c[1] + 20) + ' ' + (c[0] + 66) + ' ' + (c[1] + 172); },
+      notes: [{ t: [13.6, 15.7], text: 'en ligne,\nsous vos comptes', at: [712, 104, -3], arrow: [708, 114, 640, 76, -.2] }],
+      pop: { z: 110, s: 1.4, y: -5 }
     },
     tall: {
       W: 360,
-      dev: { cx: 180, cy: 330, cyIntro: 430, w: 172 },
-      fanL: [156, 440, -8, .92], fanR: [204, 440, 8, .92],
-      outL: [80, 128, -4, .5], outR: [215, 128, 4, .5],
-      rowL: [80, 130, -2, .5], rowR: [215, 132, 2, .5],
-      exitL: [-90, 70, -16, .5], exitR: [460, 70, 16, .5],
-      arrows: [[150, 254, 96, 238], [210, 254, 200, 240]],
-      frame: [14, 26, 278, 600, 22],
-      stamp: [42, 28, -12],
-      keep: [[180, 596], [80, 217], [215, 219]],
-      code: [8, 6], badge: [8, 224],
-      fingerIn: [330, 720], fingerOut: [350, 740],
-      pop: { z: 100, s: 1.7, y: -6 },
-      notes: [
-        { t: [1.35, 2.65], text: 'on teste au crayon,\navant le code', at: [96, 118, -3], arrow: [180, 172, 186, 244, .18] },
-        { t: [5.3, 7.2], text: 'périmètre\nécrit =\nprix ferme', at: [18, 300, -4], arrow: null },
-        { t: [9.15, 11.1], text: 'à tester\nà chaque\njalon', at: [14, 264, -3], arrow: null },
-        { t: [13.05, 15.45], text: 'en ligne, sous vos comptes', at: [74, 34, -3], arrow: [180, 68, 182, 132, .15] }
-      ]
+      st: { carnet: [-30, 0], tableau: [-150, 560], ordi: [-240, 1120], tel: [-120, 1680] },
+      desk: [-600, -900, 1700, 3100],
+      dev: { cx: 180, cy: 330, w: 172 },
+      cam: [[0, 10, -420, .5], [.7, 10, -420, .5], [2.0, 36, -56, 1.25], [3.3, 36, -56, 1.25], [4.6, -60, 358, .75], [6.9, -60, 358, .75],
+        [8.2, -150, 892, .8], [9.4, -150, 902, .8], [10.3, 386, 997, 1.1], [10.7, 386, 997, 1.1], [11.7, 0, 1580, 1], [12.3, 0, 1580, 1], [13.6, 0, 2260, 1]],
+      mint: function (b, c) { return 'M' + (b[0] + 600) + ' ' + (b[1] + 230) + ' C' + (b[0] + 760) + ' ' + (b[1] + 420) + ' ' + (c[0] + 180) + ' ' + (c[1] - 220) + ' ' + (c[0] + 315) + ' ' + (c[1] + 40); },
+      notes: [{ t: [13.6, 15.7], text: 'en ligne, sous vos comptes', at: [74, 34, -3], arrow: [180, 68, 182, 132, .15] }],
+      pop: { z: 100, s: 1.7, y: -6 }
     }
   };
-  var PH = [0, 4.1, 7.2, 11.1], END = 16.1, SHOW = [4.05, 7.17, 10.98, END];
+  var PH = [0, 4.5, 7.4, 10.6], END = 16.4, SHOW = [3.2, 6.95, 10.45, END];
   var EO = 'cubic-bezier(.16, 1, .3, 1)', EIO = 'cubic-bezier(.65, 0, .35, 1)', EIN = 'cubic-bezier(.55, 0, .8, .25)';
   var POP = 'cubic-bezier(.34, 1.56, .64, 1)', DRAW = 'cubic-bezier(.45, .05, .25, 1)';
+  // Dans le carnet et sur le tableau (repère du poste) : centre de chaque fiche.
+  var BOOK = { etapes: [125, 200], carte: [290, 200], depenses: [500, 200] };
+  var BOARD = { etapes: [330, 225], carte: [150, 225], depenses: [510, 225] };
+  var CARD = { w: 129, h: 280 }, PHONE = { x: 300, y: 220, w: 130 };
 
   var E = {
     pencil: qa('[data-mark="pencil"] path', hero), mint: q('[data-mark="mint"] path', hero),
-    scene: q('[data-scene]'), screen: q('[data-screen]'), bezel: q('.device-bezel'), edges: qa('.device-edge'),
-    back: q('.device-back'), buttons: q('.device-buttons'), glare: q('.device-glare'), glow: q('.device-glow'),
-    shadow: q('.device-shadow'), island: q('[data-island]'), notif: q('[data-notif]'), light: q('[data-light]'),
-    contourSvg: q('.device-contour'), contour: q('[data-contour]'), chips: qa('.chip'),
-    intro: q('[data-intro]'), live: q('[data-live]'), sketch: q('[data-sketch]'), wire: q('[data-wire]'),
-    scan: q('[data-scan]'), reals: qa('[data-real]'), flashes: qa('[data-flash]'),
-    cardL: q('[data-card="carte"]'), cardR: q('[data-card="depenses"]'),
-    ink: q('[data-ink]'), keeps: qa('[data-keep]'), stamp: q('[data-stamp]'),
-    code: q('[data-code]'), lines: qa('[data-line]'), badge: q('[data-badge]'),
-    strip: q('[data-strip]'), noteInk: q('[data-note-ink]'), notes: qa('[data-note]'),
-    finger: q('[data-finger]'), ring: q('[data-ring]')
+    win: q('[data-window]'), world: q('[data-world]'), desk: q('[data-desk]'), mintline: q('[data-mintline]'),
+    st: { carnet: q('[data-st="carnet"]'), tableau: q('[data-st="tableau"]'), over: q('[data-st="tableau-over"]'), ordi: q('[data-st="ordi"]'), tel: q('[data-st="tel"]') },
+    cards: { etapes: q('[data-card="etapes"]'), carte: q('[data-card="carte"]'), depenses: q('[data-card="depenses"]') },
+    finger: q('[data-finger]'), col: qa('[data-col]'), tapArrow: q('[data-taparrow]'),
+    pins: qa('[data-pin]'), barrows: qa('[data-barrow]'), bframe: q('[data-bframe]'), narrow: q('[data-narrow]'),
+    stamp: q('[data-stamp]'), jalons: qa('[data-jalon]'), keeps: { etapes: q('[data-keep="etapes"]'), carte: q('[data-keep="carte"]'), depenses: q('[data-keep="depenses"]') },
+    code: q('[data-code]'), lines: qa('[data-line]'), reals: qa('[data-real]'), flashes: qa('[data-flash]'),
+    badge: q('[data-badge]'), strip: q('[data-strip]'), darrow: q('[data-darrow]'), wphone: q('[data-wphone]'),
+    scene: q('[data-scene]'), glow: q('.device-glow'), shadow: q('.device-shadow'), light: q('[data-light]'),
+    notif: q('[data-notif]'), chips: qa('.chip'), noteInk: q('[data-note-ink]'), notes: qa('[data-note]')
   };
   E.hls = E.lines.map(function (li) { return q('.hl', li); });
+  function wnote(name) { return q('[data-wnote="' + name + '"]'); }
 
   var anims = [], seen = null, P = PRESETS.wide, u = 1;
   var T = 0, t0 = 0, playing = false, ended = false;
@@ -196,6 +179,9 @@
   }
   function px(v) { return (v * u).toFixed(2) + 'px'; }
   function tf(p) { return 'translate(' + px(p[0]) + ', ' + px(p[1]) + ') rotate(' + (p[2] || 0) + 'deg) scale(' + (p[3] == null ? 1 : p[3]) + ')'; }
+  // Dans le monde, on parle en em (1em = 1 unité).
+  function wtf(x, y, r, s) { return 'translate(' + x.toFixed(1) + 'em, ' + y.toFixed(1) + 'em) rotate(' + (r || 0) + 'deg) scale(' + (s == null ? 1 : s) + ')'; }
+  function camTf(c) { return 'scale(' + c[3] + ') translate(' + (-c[1]).toFixed(1) + 'em, ' + (-c[2]).toFixed(1) + 'em)'; }
 
   // Un tracé fait de plusieurs sous-tracés les dessine tous en même temps :
   // on n'anime donc que jusqu'au plus long, mesuré une fois.
@@ -229,15 +215,15 @@
       else wipe(el, at + dur * .15, dur * 1.15);
     });
   }
+  // Une flèche crayonnée : la tige, puis la pointe.
+  function drawArrow(g, at, dur) {
+    if (!g) return;
+    draw(qa('[data-shaft] path', g), at, dur, DRAW);
+    draw(qa('[data-head] path', g), at + dur * .85, .14, 'ease-out');
+  }
 
-  // Flèches et cadre, recalculés à chaque mise en page (en pixels de scène).
   function mk(svg, cls) { var p = document.createElementNS(SVGNS, 'path'); p.setAttribute('class', cls); p.setAttribute('pathLength', '1'); svg.appendChild(p); return p; }
   function f1(v) { return v.toFixed(1); }
-  function clear(svg) {
-    svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
-  }
-  // Une flèche tracée à la main : une tige doublée, puis la pointe.
   function arrow(svg, cls, a, bend) {
     var x0 = a[0] * u, y0 = a[1] * u, x1 = a[2] * u, y1 = a[3] * u;
     var dx = x1 - x0, dy = y1 - y0, len = Math.sqrt(dx * dx + dy * dy);
@@ -250,23 +236,22 @@
     head.setAttribute('d', 'M' + f1(x1 - ax * h - ay * w) + ' ' + f1(y1 - ay * h + ax * w) + ' L' + f1(x1) + ' ' + f1(y1) + ' L' + f1(x1 - ax * h + ay * w) + ' ' + f1(y1 - ay * h - ax * w));
     return [shaft, head];
   }
-  function layoutInk() {
-    clear(E.ink); clear(E.noteInk);
-    var arrows = P.arrows.map(function (a, i) { return arrow(E.ink, 'ink-arrow', a, (i ? -1 : 1) * .16); });
-    var noteArrows = P.notes.map(function (n) { return n.arrow ? arrow(E.noteInk, '', n.arrow, n.arrow[4]) : null; });
-    var f = P.frame, x = f[0] * u, y = f[1] * u, w = f[2] * u, hh = f[3] * u, r = f[4] * u;
-    var frame = mk(E.ink, 'ink-frame');
-    frame.setAttribute('d', 'M' + f1(x + r) + ' ' + f1(y) + ' H' + f1(x + w - r) + ' A' + f1(r) + ' ' + f1(r) + ' 0 0 1 ' + f1(x + w) + ' ' + f1(y + r) +
-      ' V' + f1(y + hh - r) + ' A' + f1(r) + ' ' + f1(r) + ' 0 0 1 ' + f1(x + w - r) + ' ' + f1(y + hh) + ' H' + f1(x + r) +
-      ' A' + f1(r) + ' ' + f1(r) + ' 0 0 1 ' + f1(x) + ' ' + f1(y + hh - r) + ' V' + f1(y + r) + ' A' + f1(r) + ' ' + f1(r) + ' 0 0 1 ' + f1(x + r) + ' ' + f1(y));
-    return { arrows: arrows, frame: frame, notes: noteArrows };
-  }
 
-  // Position (en unités) d'un point de l'écran croqué, pendant l'intro.
-  function onScreen(sx, sy) {
-    var w = P.dev.w, h = w * 2.0894, pad = w * .036, sw = w * .928, sh = sw * 2000 / 920;
-    return [P.dev.cx - w / 2 + pad + sw * sx / 920, P.dev.cyIntro - h / 2 + pad + sh * sy / 2000];
+  // Place le décor pour le format courant : postes, bureau, trait menthe.
+  function layoutWorld() {
+    E.world.style.fontSize = u + 'px';
+    var d = P.desk;
+    E.desk.style.cssText = 'left:' + d[0] + 'em;top:' + d[1] + 'em;width:' + d[2] + 'em;height:' + d[3] + 'em';
+    Object.keys(P.st).forEach(function (k) { E.st[k].style.transform = 'translate(' + P.st[k][0] + 'em, ' + P.st[k][1] + 'em)'; });
+    E.st.over.style.transform = E.st.tableau.style.transform;
+    E.mintline.setAttribute('d', P.mint(P.st.tableau, P.st.ordi));
+    spans.delete(E.mintline);
+    // les notes de la fin, sur l'affiche indigo
+    E.noteInk.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+    while (E.noteInk.firstChild) E.noteInk.removeChild(E.noteInk.firstChild);
+    return P.notes.map(function (n) { return n.arrow ? arrow(E.noteInk, '', n.arrow, n.arrow[4]) : null; });
   }
+  function at(st, p) { return [P.st[st][0] + p[0], P.st[st][1] + p[1]]; }
 
   function build() {
     anims.forEach(function (a) { a.cancel(); });
@@ -274,72 +259,70 @@
     var name = getComputedStyle(stage).getPropertyValue('--preset').trim();
     P = PRESETS[name] || PRESETS.wide;
     u = stage.clientWidth / P.W;
-    var ink = layoutInk();
-    var cardShadow = '0 ' + px(14) + ' ' + px(32) + ' rgba(1, 1, 13, .38)', noShadow = '0 0 0 rgba(1, 1, 13, 0)';
+    var noteArrows = layoutWorld();
+    // Annotations du concept 2 qui n'ont pas lieu ici.
+    qa('[data-k="tap-depenses"], [data-k="circle25"]').forEach(function (el) { el.style.display = 'none'; });
 
-    /* — 1. Croquis — */
-    add(E.scene, [{ opacity: 0, scale: .94 }, { opacity: 1, scale: 1 }], .05, .6, EO);
-    [[E.cardL, P.fanL], [E.cardR, P.fanR]].forEach(function (c, i) {
-      var f = c[1];
-      add(c[0], [{ opacity: 0 }, { opacity: 1 }], .12 + i * .06, .45, EO);
-      add(c[0], [{ transform: tf([f[0], f[1] + 26, f[2] * 1.6, f[3] * .97]) }, { transform: tf(f) }], .12 + i * .06, .7, EO);
-    });
+    /* — La caméra : un seul plan-séquence — */
+    var last = P.cam[P.cam.length - 1][0];
+    add(E.world, P.cam.map(function (c, i) {
+      var next = P.cam[i + 1], ease = 'linear';
+      if (next) ease = next[3] !== c[3] && Math.abs(next[1] - c[1]) < 600 && Math.abs(next[2] - c[2]) < 600 ? 'cubic-bezier(.45, 0, .2, 1)' : EIO;
+      return { transform: camTf(c), offset: c[0] / last, easing: ease };
+    }), 0, last, 'linear');
+    add(E.win, [{ opacity: 1 }, { opacity: 0 }], 13.5, .3);
+
+    /* — 1. Croquis : le carnet — */
     draw(E.pencil, .35, .75, EIO);
-    drawCard(E.sketch, .4, .075, .34);
-    drawCard(E.cardL, .8, .09, .32);
-    drawCard(E.cardR, 1.0, .09, .32);
+    drawCard(E.cards.etapes, .3, .07, .34);
+    drawCard(E.cards.carte, .6, .08, .32);
+    drawCard(E.cards.depenses, .9, .08, .32);
+    E.col.forEach(function (el, i) { wipe(el, 1.1 + i * .16, .4); });
+    var tapLocal = [BOOK.etapes[0] - CARD.w / 2 + CARD.w * 380 / 920, BOOK.etapes[1] - CARD.h / 2 + CARD.h * 744 / 2000];
+    var tap = at('carnet', tapLocal), fin = at('carnet', [330, 430]), fout = at('carnet', [380, 480]);
+    add(E.finger, [{ opacity: 0 }, { opacity: 1 }], 2.0, .25);
+    add(E.finger, [{ transform: wtf(fin[0], fin[1], -8) }, { transform: wtf(tap[0], tap[1], -14) }], 2.0, .42, EO);
+    add(E.finger, [{ transform: wtf(tap[0], tap[1], -14, 1) }, { transform: wtf(tap[0], tap[1], -14, .86), offset: .45 }, { transform: wtf(tap[0], tap[1], -14, 1) }], 2.45, .24, 'ease-in-out');
+    draw(qa('[data-k="tap-carte"] path', E.cards.etapes), 2.5, .3, EIO);
+    drawArrow(E.tapArrow, 2.62, .3);
+    draw(qa('[data-k="route"] path', E.cards.carte), 2.78, .6, DRAW);
+    qa('[data-k^="pin"]', E.cards.carte).forEach(function (g, i) { add(g, [{ transform: 'scale(0)' }, { transform: 'scale(1)' }], 2.9 + i * .08, .3, POP); });
+    add(E.finger, [{ transform: wtf(tap[0], tap[1], -14) }, { transform: wtf(fout[0], fout[1], -6) }], 3.2, .4, EIN);
+    add(E.finger, [{ opacity: 1 }, { opacity: 0 }], 3.4, .2);
+    var nc = wnote('croquis');
+    wipe(nc, 2.15, .55);
+    add(nc, [{ opacity: 1 }, { opacity: 0 }], 3.3, .3);
+    add(E.tapArrow, [{ opacity: 1 }, { opacity: 0 }], 3.35, .25);
 
-    var tap1 = onScreen(380, 744), tap2 = onScreen(590, 744);
-    function press(at, p, rot) {
-      add(E.finger, [{ transform: tf([p[0], p[1], rot, 1]) }, { transform: tf([p[0], p[1], rot, .86]), offset: .45 }, { transform: tf([p[0], p[1], rot, 1]) }], at, .24, 'ease-in-out');
-      add(E.ring, [{ opacity: 0, transform: tf([p[0], p[1], 0, .3]) }, { opacity: 1, transform: tf([p[0], p[1], 0, .9]), offset: .25 }, { opacity: 0, transform: tf([p[0], p[1], 0, 1.7]) }], at + .04, .5, 'ease-out');
-    }
-    add(E.finger, [{ opacity: 0 }, { opacity: 1 }], 2.2, .25, EO);
-    add(E.finger, [{ transform: tf([P.fingerIn[0], P.fingerIn[1], -8, 1]) }, { transform: tf([tap1[0], tap1[1], -14, 1]) }], 2.2, .42, EO);
-    press(2.62, tap1, -14);
-    draw(qa('[data-k="tap-carte"] path', E.sketch), 2.66, .3, EIO);
-    add(E.cardL, [{ transform: tf(P.fanL) }, { transform: tf(P.outL) }], 2.74, .55, EO);
-    draw(qa('[data-k="route"] path', E.cardL), 2.98, .62, DRAW);
-    qa('[data-k^="pin"]', E.cardL).forEach(function (g, i) { add(g, [{ transform: 'scale(0)' }, { transform: 'scale(1)' }], 3.08 + i * .08, .3, POP); });
-    add(E.finger, [{ transform: tf([tap1[0], tap1[1], -14, 1]) }, { transform: tf([tap2[0], tap2[1], -12, 1]) }], 3.16, .28, EIO);
-    press(3.46, tap2, -12);
-    draw(qa('[data-k="tap-depenses"] path', E.sketch), 3.5, .3, EIO);
-    add(E.cardR, [{ transform: tf(P.fanR) }, { transform: tf(P.outR) }], 3.58, .55, EO);
-    draw(qa('[data-k="circle25"] path', E.cardR), 3.76, .34, EIO);
-    add(E.finger, [{ transform: tf([tap2[0], tap2[1], -12, 1]) }, { transform: tf([P.fingerOut[0], P.fingerOut[1], -6, 1]) }], 3.84, .42, EIN);
-    add(E.finger, [{ opacity: 1 }, { opacity: 0 }], 4.02, .22);
-
-    /* — 2. Cadrage — */
-    add(E.cardL, [{ transform: tf(P.outL) }, { transform: tf(P.rowL) }], 4.1, .65, EO);
-    add(E.cardR, [{ transform: tf(P.outR) }, { transform: tf(P.rowR) }], 4.16, .65, EO);
-    ink.arrows.forEach(function (a, i) { draw(a[0], 4.66 + i * .16, .38, DRAW); draw(a[1], 4.98 + i * .16, .16, 'ease-out'); });
-    draw(ink.frame, 5.02, .85, EIO);
-    var st = P.stamp;
-    add(E.stamp, [{ opacity: 0, transform: tf([st[0], st[1], st[2] - 8, 2.3]) }, { opacity: 1, transform: tf([st[0], st[1], st[2], .94]), offset: .75 }, { opacity: 1, transform: tf([st[0], st[1], st[2], 1]) }], 5.74, .3, 'cubic-bezier(.5, 0, .3, 1)');
-    [E.cardL, E.cardR].forEach(function (c) { add(c, [{ rotate: '0deg' }, { rotate: '-1deg', offset: .3 }, { rotate: '.6deg', offset: .65 }, { rotate: '0deg' }], 5.92, .32, 'ease-out'); });
-    // Ce que garde la V1 : une étiquette par écran retenu, dans l'ordre du parcours.
-    P.keep.forEach(function (k, i) {
-      var el = E.keeps[i], at = 6.0 + i * .22;
-      add(el, [{ opacity: 0, transform: tf([k[0], k[1] + 6, 0, .4]) }, { opacity: 1, transform: tf([k[0], k[1], 0, 1]) }], at, .45, POP);
-      draw(qa('path', el), at + .18, .28, EIO);
+    // Les croquis quittent le carnet et volent jusqu'au tableau.
+    ['etapes', 'carte', 'depenses'].forEach(function (k, i) {
+      var a = at('carnet', BOOK[k]), b = at('tableau', BOARD[k]), t = 3.45 + i * .07;
+      var mid = [(a[0] + b[0]) / 2, Math.min(a[1], b[1]) - 70];
+      add(E.cards[k], [
+        { transform: wtf(a[0], a[1], 0, 1), boxShadow: '0 1.5em 4em rgba(46, 43, 69, .16)' },
+        { transform: wtf(mid[0], mid[1], i === 1 ? -7 : 6, 1.12), boxShadow: '0 9em 18em rgba(46, 43, 69, .3)', offset: .5 },
+        { transform: wtf(b[0], b[1], 0, 1), boxShadow: '0 1.5em 4em rgba(46, 43, 69, .16)' }
+      ], t, 1.0, EIO);
     });
-    add(ink.frame, [{ strokeWidth: 3 }, { strokeWidth: 6, offset: .45 }, { strokeWidth: 3 }], 6.8, .55, 'ease-in-out');
 
-    /* — 3. Développement — */
-    [E.stamp, E.ink].concat(E.keeps).forEach(function (el) { add(el, [{ opacity: 1 }, { opacity: 0 }], 7.2, .4, EO); });
-    add(E.cardL, [{ transform: tf(P.rowL) }, { transform: tf(P.exitL) }], 7.2, .65, EIN);
-    add(E.cardR, [{ transform: tf(P.rowR) }, { transform: tf(P.exitR) }], 7.24, .65, EIN);
-    add(E.cardL, [{ opacity: 1 }, { opacity: 0 }], 7.45, .4);
-    add(E.cardR, [{ opacity: 1 }, { opacity: 0 }], 7.5, .4);
-    add(E.screen, [{ boxShadow: cardShadow }, { boxShadow: noShadow }], 7.4, .5, EO);
-    add(E.scan, [{ opacity: 0 }, { opacity: 1 }], 7.56, .06);
-    add(E.scan, [{ top: '-6%' }, { top: '94%' }], 7.6, .85, EIO);
-    add(E.scan, [{ opacity: 1 }, { opacity: 0 }], 8.45, .2);
-    add(E.sketch, [{ clipPath: 'inset(0% 0 0 0)' }, { clipPath: 'inset(100% 0 0 0)' }], 7.6, .85, EIO);
-    add(E.wire, [{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)' }], 7.6, .85, EIO);
-    var cx0 = P.code[0], cy0 = P.code[1];
-    add(E.code, [{ opacity: 0, transform: tf([cx0 - 30, cy0, 0, 1]) }, { opacity: 1, transform: tf([cx0, cy0, 0, 1]) }], 7.7, .55, EO);
-    var lineT = [8.25, 8.35, 8.45, 8.6, 9.2, 9.8, 10.4, 10.75, 10.82, 10.89];
+    /* — 2. Cadrage : le tableau — */
+    E.pins.forEach(function (g, i) { add(g, [{ transform: 'scale(0)' }, { transform: 'scale(1)' }], 4.48 + i * .06, .3, POP); });
+    E.barrows.forEach(function (g, i) { drawArrow(g, 4.7 + i * .15, .32); });
+    draw(E.bframe, 4.95, .8, EIO);
+    add(E.stamp, [{ opacity: 0, transform: 'rotate(-20deg) scale(2.3)' }, { opacity: 1, transform: 'rotate(-12deg) scale(.94)', offset: .75 }, { opacity: 1, transform: 'rotate(-12deg) scale(1)' }], 5.7, .3, 'cubic-bezier(.5, 0, .3, 1)');
+    ['etapes', 'carte', 'depenses'].forEach(function (k, i) {
+      var el = E.keeps[k], t = 5.9 + i * .22;
+      add(el, [{ opacity: 0, transform: 'translateY(30%) scale(.4)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], t, .45, POP);
+      draw(qa('path', el), t + .18, .28, EIO);
+    });
+    E.jalons.forEach(function (el, i) { wipe(el, 5.05 + i * .25, .4); });
+    wipe(wnote('cadrage'), 6.05, .45); wipe(wnote('cadrage2'), 6.25, .4);
+    drawArrow(E.narrow, 6.5, .3);
+    add(E.bframe, [{ strokeWidth: 4 }, { strokeWidth: 8, offset: .45 }, { strokeWidth: 4 }], 6.7, .55, 'ease-in-out');
+
+    /* — 3. Développement : le trait menthe mène à l'ordinateur — */
+    draw(E.mintline, 6.95, 1.25, EIO);
+    var lineT = [8.2, 8.3, 8.4, 8.55, 9.1, 9.65, 10.2, 10.5, 10.57, 10.64];
     E.lines.forEach(function (li, i) {
       add(li, [{ clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)' }], lineT[i], i >= 3 && i <= 6 ? .24 : .1, 'steps(16, end)');
     });
@@ -347,58 +330,47 @@
     [3, 4, 5, 6].forEach(function (li, k) {
       var t = lineT[li];
       add(E.hls[li], [{ opacity: 0 }, { opacity: 1 }], t + .2, .12);
-      add(E.hls[li], [{ opacity: 1 }, { opacity: 0 }], k < 3 ? lineT[li + 1] + .2 : 10.95, .2);
+      add(E.hls[li], [{ opacity: 1 }, { opacity: 0 }], k < 3 ? lineT[li + 1] + .2 : 10.7, .2);
       add(E.reals[k], [{ clipPath: 'inset(' + R[k][0] + '% 100% ' + R[k][1] + '% 0%)' }, { clipPath: 'inset(' + R[k][0] + '% 0% ' + R[k][1] + '% 0%)' }], t + .26, .45, EIO);
       add(E.flashes[k], [{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 0 }], t + .26, .75, 'ease-out');
     });
-    var b = P.badge;
-    add(E.badge, [{ opacity: 0, transform: tf([b[0], b[1] + 8, 0, 1]) }, { opacity: 1, transform: tf([b[0], b[1], 0, 1]) }], 9.0, .45, EO);
-    add(E.strip, [{ transform: 'translateY(0em)' }, { transform: 'translateY(-1.2em)' }], 10.15, .35, POP);
-    add(E.strip, [{ transform: 'translateY(-1.2em)' }, { transform: 'translateY(-2.4em)' }], 10.85, .35, POP);
+    add(E.badge, [{ opacity: 0, transform: 'translateY(.6em)' }, { opacity: 1, transform: 'translateY(0)' }], 8.9, .45, EO);
+    add(E.strip, [{ transform: 'translateY(0em)' }, { transform: 'translateY(-1.2em)' }], 9.75, .35, POP);
+    add(E.strip, [{ transform: 'translateY(-1.2em)' }, { transform: 'translateY(-2.4em)' }], 10.35, .35, POP);
+    wipe(wnote('dev'), 9.6, .45); wipe(wnote('dev2'), 9.8, .4);
+    drawArrow(E.darrow, 10.0, .3);
 
-    /* — 4. Stores — */
-    add(E.code, [{ opacity: 1, transform: tf([cx0, cy0, 0, 1]) }, { opacity: 0, transform: tf([cx0 - 30, cy0, 0, 1]) }], 11.1, .4, EIN);
-    add(E.badge, [{ opacity: 1 }, { opacity: 0 }], 11.1, .35);
-    add(E.contourSvg, [{ opacity: 0 }, { opacity: 1 }], 11.18, .05);
-    draw(E.contour, 11.2, .75, EIO);
-    add(E.contourSvg, [{ opacity: 1 }, { opacity: 0 }], 12.1, .45);
-    add(E.bezel, [{ opacity: 0 }, { opacity: 1 }], 11.7, .45, EO);
-    E.edges.forEach(function (el, i) { add(el, [{ opacity: 0 }, { opacity: 1 }], 11.8 + i * .035, .15); });
-    add(E.back, [{ opacity: 0 }, { opacity: 1 }], 12.0, .2);
-    add(E.buttons, [{ opacity: 0 }, { opacity: 1 }], 12.0, .2);
-    add(E.island, [{ opacity: 0, transform: 'scale(.2)' }, { opacity: 1, transform: 'scale(1)' }], 11.95, .45, POP);
-    add(E.glare, [{ opacity: 0 }, { opacity: 1 }], 12.05, .5);
+    /* — 4. Stores : le téléphone quitte le bureau — */
+    var camD = P.cam[11], ph = at('tel', [PHONE.x, PHONE.y]);
+    var hx = (ph[0] - camD[1]) * camD[3] - P.dev.cx, hy = (ph[1] - camD[2]) * camD[3] - P.dev.cy, s0 = PHONE.w * camD[3] / P.dev.w;
+    add(E.wphone, [{ opacity: 1 }, { opacity: 0 }], 11.75, .01);
+    add(E.scene, [{ opacity: 0 }, { opacity: 1 }], 11.75, .01);
+    add(E.scene, [{ transform: tf([hx, hy, -10, s0]) }, { transform: tf([0, 0, 0, 1]) }], 11.8, 1.0, EO);
     add(E.glow, [{ scale: 0 }, { scale: 1 }], 12.0, .8, EO);
-    add(E.shadow, [{ opacity: 0 }, { opacity: 1 }], 12.0, .6);
-    var dy = P.dev.cyIntro - P.dev.cy;
-    if (dy) add(E.scene, [{ transform: 'translateY(' + px(dy) + ')' }, { transform: 'translateY(0px)' }], 11.85, .9, EO);
-    add(E.light, [{ transform: 'translateX(-130%)' }, { transform: 'translateX(130%)' }], 12.15, .6, 'ease-in-out');
+    add(E.shadow, [{ opacity: 0 }, { opacity: 1 }], 11.9, .6);
+    add(E.light, [{ transform: 'translateX(-130%)' }, { transform: 'translateX(130%)' }], 12.6, .6, 'ease-in-out');
     var pop = P.pop, inScreen = 'translateY(0%) translateZ(2px) scale(1)';
     var out = 'translateY(' + pop.y + '%) translateZ(' + px(pop.z) + ') scale(' + pop.s + ')';
-    add(E.notif, [{ opacity: 0, transform: 'translateY(-45%) translateZ(2px) scale(.94)' }, { opacity: 1, transform: inScreen }], 12.35, .5, 'cubic-bezier(.2, 1.25, .4, 1)');
-    add(E.notif, [{ transform: inScreen, boxShadow: '0 ' + px(4) + ' ' + px(10) + ' rgba(1, 1, 13, .22)' }, { transform: out, boxShadow: '0 ' + px(26) + ' ' + px(48) + ' rgba(1, 1, 13, .45)' }], 12.95, .75, 'cubic-bezier(.22, 1.45, .4, 1)');
-    draw(E.mint, 12.7, .6, EIO);
-    // Les cartes flottantes n'arrivent qu'une fois la notification partie.
-    E.chips.forEach(function (c, i) { add(c, [{ opacity: 0, scale: .6 }, { opacity: 1, scale: 1 }], 15.35 + i * .15, .45, POP); });
-    add(E.notif, [{ opacity: 1, transform: out }, { opacity: 0, transform: 'translateY(' + (pop.y - 60) + '%) translateZ(' + px(pop.z + 40) + ') scale(' + pop.s + ')' }], 15.4, .45, EIN);
-    add(E.live, [{ opacity: 0 }, { opacity: 1 }], 15.75, .05);
-    add(E.intro, [{ opacity: 1 }, { opacity: 0 }], 15.8, .15);
+    add(E.notif, [{ opacity: 0, transform: 'translateY(-45%) translateZ(2px) scale(.94)' }, { opacity: 1, transform: inScreen }], 12.9, .5, 'cubic-bezier(.2, 1.25, .4, 1)');
+    add(E.notif, [{ transform: inScreen, boxShadow: '0 ' + px(4) + ' ' + px(10) + ' rgba(1, 1, 13, .22)' }, { transform: out, boxShadow: '0 ' + px(26) + ' ' + px(48) + ' rgba(1, 1, 13, .45)' }], 13.5, .75, 'cubic-bezier(.22, 1.45, .4, 1)');
+    draw(E.mint, 13.4, .6, EIO);
+    add(E.notif, [{ opacity: 1, transform: out }, { opacity: 0, transform: 'translateY(' + (pop.y - 60) + '%) translateZ(' + px(pop.z + 40) + ') scale(' + pop.s + ')' }], 15.6, .45, EIN);
+    E.chips.forEach(function (c, i) { add(c, [{ opacity: 0, scale: .6 }, { opacity: 1, scale: 1 }], 15.65 + i * .15, .45, POP); });
 
-    /* — Notes turquoise : écrites ligne à ligne, puis la flèche — */
+    /* — La note de la fin, sur l'affiche — */
     P.notes.forEach(function (n, i) {
       var el = E.notes[i];
       if (!el) return;
       el.textContent = '';
-      n.text.split('\n').forEach(function (line) { var sp = document.createElement('span'); sp.textContent = line; el.appendChild(sp); });
+      n.text.split('\n').forEach(function (l) { var sp = document.createElement('span'); sp.textContent = l; el.appendChild(sp); });
       el.style.transform = tf(n.at);
       add(el, [{ opacity: 0 }, { opacity: 1 }], n.t[0], .05);
       [].forEach.call(el.children, function (sp, k) { wipe(sp, n.t[0] + k * .22, .42); });
-      var lineCount = el.children.length;
-      if (ink.notes[i]) {
-        var at = n.t[0] + lineCount * .22 + .1;
-        draw(ink.notes[i][0], at, .35, DRAW);
-        draw(ink.notes[i][1], at + .32, .14, 'ease-out');
-        ink.notes[i].forEach(function (pth) { add(pth, [{ opacity: 1 }, { opacity: 0 }], n.t[1] - .25, .25); });
+      if (noteArrows[i]) {
+        var a = n.t[0] + el.children.length * .22 + .1;
+        draw(noteArrows[i][0], a, .35, DRAW);
+        draw(noteArrows[i][1], a + .32, .14, 'ease-out');
+        noteArrows[i].forEach(function (pth) { add(pth, [{ opacity: 1 }, { opacity: 0 }], n.t[1] - .25, .25); });
       }
       add(el, [{ opacity: 1 }, { opacity: 0 }], n.t[1] - .25, .25);
     });

@@ -439,3 +439,48 @@ footer.bottom { border-top-color: var(--border); }
   .chip, .device-glow, .poster-title .t-block, .poster-title .t-serif, .poster-foot, .poster-tools { animation: none !important; }
   .tab-panel, .tab-pill, .tabbar-track, .sheet, .sheet-dim, .sheet-top { transition: none !important; }
 }
+
+/* ——— Concept 3 « L'établi » : un bureau vu de dessus, que la caméra
+   parcourt sans coupe. Dans le monde, 1em = 1 unité de scène (hero.js). ——— */
+.stage--etabli { --mint-ink: #14B88B; --turq: #0C9488; --graphite: #2E2B45; }
+.et-window { position: absolute; inset: 0; overflow: hidden; border-radius: 18px; z-index: 1; opacity: 0; }
+.et-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-size: 1px; }
+.et-world > *, .et-st > * { position: absolute; left: 0; top: 0; }
+.et-desk { border-radius: 40em; background:
+  radial-gradient(120% 90% at 30% 40%, rgba(255, 255, 255, .55), transparent 60%),
+  linear-gradient(180deg, #EEEAFD, #E4DEFA); box-shadow: 0 0 0 1px rgba(46, 43, 69, .06), 30em 30em 80em rgba(1, 1, 13, .35); }
+.et-st { width: 0; height: 0; overflow: visible; }
+.et-deco { overflow: visible; }
+.et-deco path:not([fill]) { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; stroke-dashoffset: 0; }
+.et-deco path:not([fill]):not([stroke]) { stroke: var(--graphite); }
+.et-spiral circle { fill: #fff; stroke: #B9B3D6; stroke-width: 3; }
+.et-book { border-radius: 10em; background-color: #fff; background-image: linear-gradient(90deg, transparent 48%, rgba(46, 43, 69, .07) 50%, transparent 52%), radial-gradient(circle, rgba(99, 49, 251, .16) 1.2px, transparent 1.4px); background-size: 100% 100%, 14em 14em; box-shadow: 0 8em 24em rgba(46, 43, 69, .2), 0 1em 0 #E9E5F8; }
+.et-board { border: 10em solid #DAD5EE; border-radius: 12em; background: #fff; box-shadow: 0 10em 26em rgba(46, 43, 69, .2); }
+.et-monitor { border: 12em solid #0E0C24; border-radius: 18em; background: radial-gradient(120% 120% at 70% 20%, #211B55, #120F33 70%); box-shadow: 0 12em 30em rgba(1, 1, 13, .35); }
+.et-pos { width: 0; height: 0; }
+.et-t { white-space: nowrap; line-height: 1; transform: translateY(-50%); font-family: 'Caveat', 'Segoe Print', cursive; font-weight: 500; color: var(--graphite); }
+.et-t > span { display: block; }
+.et-hw--b { font-weight: 700; }
+.et-note { font-weight: 700; color: var(--turq); }
+.et-note--dark { color: var(--mint); }
+.et-frame { fill: none; stroke: var(--mint-ink); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1 2; stroke-dashoffset: 0; }
+.et-pin { transform-box: fill-box; transform-origin: center; }
+.et-line { position: absolute; overflow: visible; pointer-events: none; }
+.et-line path { fill: none; stroke: var(--mint-ink); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 1 2; filter: drop-shadow(0 0 4px rgba(136, 249, 192, .9)); }
+.stage--etabli .sk-card { width: 129em; opacity: 1; box-shadow: 0 1.5em 4em rgba(46, 43, 69, .16), 0 0 0 1px rgba(46, 43, 69, .08); z-index: 3; }
+.stage--etabli .finger { width: 58em; opacity: 0; z-index: 6; }
+.stage--etabli .stamp { font-size: 30em; opacity: 0; color: var(--mint-ink); border-color: var(--mint-ink); }
+.stage--etabli .keep { font-size: 12.5em; opacity: 0; box-shadow: 0 .3em .8em rgba(46, 43, 69, .25); }
+.et-code { font-size: 12em; width: 40.8em; height: 21.3em; opacity: 1; box-shadow: none; border-radius: .8em; }
+.et-sim { width: 124em; padding: 4.46em; border-radius: 22em / 21em; background: #0B0A1F; box-shadow: 0 0 0 1.5em rgba(160, 140, 255, .25); }
+.et-sim-screen { position: relative; aspect-ratio: 920 / 2000; overflow: hidden; border-radius: 13.5% / 6.2%; background: #fff; container-type: inline-size; }
+.stage--etabli .et-badge { font-size: 12em; opacity: 0; }
+.et-phone { width: 130em; padding: 4.7em; border-radius: 22em / 21.6em; background: #04030f; box-shadow: inset 0 0 0 1.5px rgba(160, 140, 255, .55), 10em 16em 26em rgba(46, 43, 69, .35); transform: rotate(-10deg); }
+.et-phone img { display: block; width: 100%; height: auto; border-radius: 13.5% / 6.2%; }
+/* La notification et les cartes ne sont qu'à la fin ; le téléphone arrive du bureau. */
+.stage--etabli .device-scene { z-index: 4; }
+@container poster (max-width: 640px) {
+  .stage--etabli .keep { font-size: 17em; }
+  .stage--etabli .et-badge { font-size: 15em; }
+}
+.et-over { z-index: 4; }
