@@ -267,6 +267,13 @@ footer.bottom { border-top-color: var(--border); }
 .keep svg { width: 1.05em; height: 1.05em; flex: none; overflow: visible; }
 .keep path { fill: none; stroke: var(--onyx); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; }
 
+/* Étape Design : le même écran en trois pistes visuelles ; on en garde une */
+.piste { width: var(--cw); aspect-ratio: 920 / 2000; translate: -50% -50%; border-radius: 13.5% / 6.2%; overflow: hidden; background: #fff; box-shadow: 0 1.2cqw 3cqw rgba(1, 1, 13, .4); opacity: 0; z-index: 2; }
+.piste svg, .piste img { display: block; width: 100%; height: 100%; }
+.piste-label { translate: -50% -50%; display: inline-flex; align-items: center; gap: .35em; margin: 0; color: rgba(255, 255, 255, .9); font-family: var(--font-heading); font-weight: 600; font-size: 1.05cqw; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; opacity: 0; z-index: 6; }
+.piste-label i { width: .95em; height: .95em; border-radius: 50%; box-shadow: 0 0 0 1.5px rgba(255, 255, 255, .75); }
+.piste-label i:last-of-type { margin-right: .35em; }
+
 /* Éditeur de code */
 .code { width: 34cqw; margin: 0; padding: .8em 1em 1em; border-radius: 14px; background: rgba(4, 3, 20, .93); border: 1px solid rgba(185, 166, 255, .22); box-shadow: 0 2cqw 4cqw rgba(1, 1, 13, .45); color: var(--fg); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 1.15cqw; opacity: 0; z-index: 5; }
 .code-bar { display: flex; align-items: center; gap: .45em; margin: 0 0 .7em; color: var(--muted); font-size: .92em; }
@@ -417,6 +424,7 @@ footer.bottom { border-top-color: var(--border); }
   .badge { font-size: 3.3cqw; }
   .finger { width: 17cqw; }
   .keep { font-size: 3.4cqw; }
+  .piste-label { font-size: 2.5cqw; letter-spacing: .05em; gap: .25em; }
   .hero-note { font-size: 5.4cqw; }
   .ring { width: 10cqw; }
   .chip { padding: .45rem .6rem; }

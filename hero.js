@@ -1,12 +1,14 @@
 /* Hero de l'accueil : « Votre app, du croquis aux stores, sans détour ».
-   Un scénario d'environ 19 s en quatre temps, suivis par la frise sous la scène :
+   Un scénario d'environ 22 s en cinq temps, suivis par la frise sous la scène :
    1. Croquis : trois écrans de Maurice se dessinent au crayon. Un doigt
       dessiné tape « Carte » puis « Dépenses » : le prototype papier vit déjà.
    2. Cadrage : les fiches se rangent en parcours, le trait menthe trace le
       périmètre de la V1 et chaque écran retenu reçoit son étiquette.
-   3. Développement : un balayage fait passer l'écran du croquis au fil de
-      fer, puis chaque ligne de code change un bloc en vrai composant.
-   4. Stores : le téléphone se construit autour de l'écran, la notification
+   3. Design : un balayage fait passer l'écran du croquis au fil de fer, puis
+      trois pistes visuelles du même écran apparaissent ; on en garde une.
+   4. Développement : chaque ligne de code change un bloc en vrai composant,
+      à l'image de la maquette retenue.
+   5. Stores : le téléphone se construit autour de l'écran, la notification
       App Store tombe, puis l'app vit (vraie navigation dans Maurice).
    Tout repose sur l'API Web Animations : le scénario se met en pause hors
    écran, se rejoue, et la frise permet de revenir à une étape. Si le
@@ -127,13 +129,16 @@
       keep: [[500, 412], [238, 383], [762, 383]],
       code: [40, 80], badge: [614, 30],
       fingerIn: [740, 540], fingerOut: [780, 560],
+      pistes: [[681, 205, 0, .55], [797, 205, 0, .55], [913, 205, 0, .55]], plabels: [[681, 336], [797, 336], [913, 336]],
+      retenue: [913, 94], ref: [905, 262, 0, .48], retenueRef: [905, 165], reflabel: [905, 374],
       pop: { z: 110, s: 1.4, y: -5 },
       // [apparition, disparition], texte, [x, y, rotation], flèche [x0, y0, x1, y1, courbure]
       notes: [
         { t: [2.0, 3.75], text: 'on teste au crayon,\navant le code', at: [790, 58, -3], arrow: [800, 136, 590, 166, -.22] },
         { t: [5.3, 7.2], text: 'périmètre\nécrit =\nprix ferme', at: [10, 150, -4], arrow: [62, 252, 132, 300, .28] },
-        { t: [9.15, 11.1], text: 'une version à tester\nà chaque jalon', at: [690, 118, -3], arrow: [702, 112, 694, 68, .3] },
-        { t: [13.05, 15.45], text: 'en ligne,\nsous vos comptes', at: [712, 104, -3], arrow: [708, 114, 640, 76, -.2] }
+        { t: [8.6, 10.05], text: 'plusieurs pistes visuelles,\non en garde une', at: [630, 34, -3], arrow: null },
+        { t: [11.7, 13.65], text: 'une version à tester\nà chaque jalon', at: [690, 118, -3], arrow: [702, 112, 694, 68, .3] },
+        { t: [15.6, 18.0], text: 'en ligne,\nsous vos comptes', at: [712, 104, -3], arrow: [708, 114, 640, 76, -.2] }
       ]
     },
     tall: {
@@ -149,12 +154,15 @@
       keep: [[180, 596], [80, 217], [215, 219]],
       code: [8, 6], badge: [8, 224],
       fingerIn: [330, 720], fingerOut: [350, 740],
+      pistes: [[110, 110, 0, .38], [180, 110, 0, .38], [250, 110, 0, .38]], plabels: [[110, 192], [180, 192], [250, 192]],
+      retenue: [250, 44], ref: null,
       pop: { z: 100, s: 1.7, y: -6 },
       notes: [
         { t: [1.35, 2.65], text: 'on teste au crayon,\navant le code', at: [96, 118, -3], arrow: [180, 172, 186, 244, .18] },
         { t: [5.3, 7.2], text: 'périmètre\nécrit =\nprix ferme', at: [18, 300, -4], arrow: null },
-        { t: [9.15, 11.1], text: 'à tester\nà chaque\njalon', at: [14, 264, -3], arrow: null },
-        { t: [13.05, 15.45], text: 'en ligne, sous vos comptes', at: [74, 34, -3], arrow: [180, 68, 182, 132, .15] }
+        { t: [8.6, 10.05], text: 'plusieurs pistes, on en garde une', at: [44, 212, -3], arrow: null },
+        { t: [11.7, 13.65], text: 'à tester\nà chaque\njalon', at: [14, 264, -3], arrow: null },
+        { t: [15.6, 18.0], text: 'en ligne, sous vos comptes', at: [74, 34, -3], arrow: [180, 68, 182, 132, .15] }
       ]
     }
   };
@@ -162,7 +170,7 @@
   // est ralenti d'un même facteur pour laisser le temps de lire.
   var SLOW = 1.2;
   function slow(t) { return t * SLOW; }
-  var PH = [0, 4.1, 7.2, 11.1].map(slow), END = slow(16.1), SHOW = [4.05, 7.17, 10.98, 16.1].map(slow);
+  var PH = [0, 4.1, 7.2, 10.2, 13.65].map(slow), END = slow(18.65), SHOW = [4.05, 7.17, 10.15, 13.55, 18.65].map(slow);
   var EO = 'cubic-bezier(.16, 1, .3, 1)', EIO = 'cubic-bezier(.65, 0, .35, 1)', EIN = 'cubic-bezier(.55, 0, .8, .25)';
   var POP = 'cubic-bezier(.34, 1.56, .64, 1)', DRAW = 'cubic-bezier(.45, .05, .25, 1)';
 
@@ -178,7 +186,8 @@
     ink: q('[data-ink]'), keeps: qa('[data-keep]'), stamp: q('[data-stamp]'),
     code: q('[data-code]'), lines: qa('[data-line]'), badge: q('[data-badge]'),
     strip: q('[data-strip]'), noteInk: q('[data-note-ink]'), notes: qa('[data-note]'),
-    finger: q('[data-finger]'), ring: q('[data-ring]')
+    finger: q('[data-finger]'), ring: q('[data-ring]'),
+    pistes: qa('[data-piste]'), plabels: qa('[data-plabel]'), retenue: q('[data-retenue]'), reflabel: q('[data-reflabel]')
   };
   E.hls = E.lines.map(function (li) { return q('.hl', li); });
 
@@ -329,7 +338,7 @@
     });
     add(ink.frame, [{ strokeWidth: 3 }, { strokeWidth: 6, offset: .45 }, { strokeWidth: 3 }], 6.8, .55, 'ease-in-out');
 
-    /* — 3. Développement — */
+    /* — 3. Design : du croquis au fil de fer, puis trois pistes visuelles — */
     [E.stamp, E.ink].concat(E.keeps).forEach(function (el) { add(el, [{ opacity: 1 }, { opacity: 0 }], 7.2, .4, EO); });
     add(E.cardL, [{ transform: tf(P.rowL) }, { transform: tf(P.exitL) }], 7.2, .65, EIN);
     add(E.cardR, [{ transform: tf(P.rowR) }, { transform: tf(P.exitR) }], 7.24, .65, EIN);
@@ -341,9 +350,37 @@
     add(E.scan, [{ opacity: 1 }, { opacity: 0 }], 8.45, .2);
     add(E.sketch, [{ clipPath: 'inset(0% 0 0 0)' }, { clipPath: 'inset(100% 0 0 0)' }], 7.6, .85, EIO);
     add(E.wire, [{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)' }], 7.6, .85, EIO);
+    // Trois pistes du même écran. On garde la troisième (le vrai style de Maurice),
+    // les deux autres s'effacent sans être barrées.
+    var pisteShadow = '0 ' + px(13) + ' ' + px(33) + ' rgba(1, 1, 13, .4)';
+    P.pistes.forEach(function (p, i) {
+      var t = 8.15 + i * .15, l = P.plabels[i];
+      add(E.pistes[i], [{ opacity: 0, transform: tf([p[0], p[1] + 14, p[2], p[3] * .85]) }, { opacity: 1, transform: tf(p) }], t, .5, EO);
+      add(E.plabels[i], [{ opacity: 0, transform: tf([l[0], l[1] + 6, 0, 1]) }, { opacity: 1, transform: tf([l[0], l[1], 0, 1]) }], t + .2, .4, EO);
+    });
+    var kept = E.pistes[2], r = P.retenue;
+    add(E.retenue, [{ opacity: 0, transform: tf([r[0], r[1] + 6, 0, .4]) }, { opacity: 1, transform: tf([r[0], r[1], 0, 1]) }], 9.3, .45, POP);
+    draw(qa('path', E.retenue), 9.48, .28, EIO);
+    add(kept, [{ boxShadow: pisteShadow }, { boxShadow: pisteShadow + ', 0 0 0 ' + px(3) + ' #88F9C0' }], 9.3, .35, EO);
+    [0, 1].forEach(function (i) {
+      var p = P.pistes[i];
+      add(E.pistes[i], [{ opacity: 1, transform: tf(p) }, { opacity: 0, transform: tf([p[0], p[1] + 24, p[2], p[3] * .9]) }], 9.65 + i * .06, .45, EIN);
+    });
+    E.plabels.forEach(function (el) { add(el, [{ opacity: 1 }, { opacity: 0 }], 9.6, .3); });
+    if (P.ref) {
+      // En large, la piste retenue reste à côté : c'est la maquette que le code reproduit.
+      add(kept, [{ transform: tf(P.pistes[2]) }, { transform: tf(P.ref) }], 9.8, .6, EIO);
+      add(E.retenue, [{ transform: tf([r[0], r[1], 0, 1]) }, { transform: tf([P.retenueRef[0], P.retenueRef[1], 0, 1]) }], 9.8, .6, EIO);
+      add(E.reflabel, [{ opacity: 0, transform: tf([P.reflabel[0], P.reflabel[1], 0, 1]) }, { opacity: 1, transform: tf([P.reflabel[0], P.reflabel[1], 0, 1]) }], 10.3, .4);
+      [kept, E.retenue, E.reflabel].forEach(function (el) { add(el, [{ opacity: 1 }, { opacity: 0 }], 13.55, .4); });
+    } else {
+      [kept, E.retenue].forEach(function (el) { add(el, [{ opacity: 1 }, { opacity: 0 }], 10.0, .35); });
+    }
+
+    /* — 4. Développement : le code reproduit la maquette retenue — */
     var cx0 = P.code[0], cy0 = P.code[1];
-    add(E.code, [{ opacity: 0, transform: tf([cx0 - 30, cy0, 0, 1]) }, { opacity: 1, transform: tf([cx0, cy0, 0, 1]) }], 7.7, .55, EO);
-    var lineT = [8.25, 8.35, 8.45, 8.6, 9.2, 9.8, 10.4, 10.75, 10.82, 10.89];
+    add(E.code, [{ opacity: 0, transform: tf([cx0 - 30, cy0, 0, 1]) }, { opacity: 1, transform: tf([cx0, cy0, 0, 1]) }], 10.25, .55, EO);
+    var lineT = [10.8, 10.9, 11.0, 11.15, 11.75, 12.35, 12.95, 13.3, 13.37, 13.44];
     E.lines.forEach(function (li, i) {
       add(li, [{ clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)' }], lineT[i], i >= 3 && i <= 6 ? .24 : .1, 'steps(16, end)');
     });
@@ -351,42 +388,42 @@
     [3, 4, 5, 6].forEach(function (li, k) {
       var t = lineT[li];
       add(E.hls[li], [{ opacity: 0 }, { opacity: 1 }], t + .2, .12);
-      add(E.hls[li], [{ opacity: 1 }, { opacity: 0 }], k < 3 ? lineT[li + 1] + .2 : 10.95, .2);
+      add(E.hls[li], [{ opacity: 1 }, { opacity: 0 }], k < 3 ? lineT[li + 1] + .2 : 13.5, .2);
       add(E.reals[k], [{ clipPath: 'inset(' + R[k][0] + '% 100% ' + R[k][1] + '% 0%)' }, { clipPath: 'inset(' + R[k][0] + '% 0% ' + R[k][1] + '% 0%)' }], t + .26, .45, EIO);
       add(E.flashes[k], [{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 0 }], t + .26, .75, 'ease-out');
     });
     var b = P.badge;
-    add(E.badge, [{ opacity: 0, transform: tf([b[0], b[1] + 8, 0, 1]) }, { opacity: 1, transform: tf([b[0], b[1], 0, 1]) }], 9.0, .45, EO);
-    add(E.strip, [{ transform: 'translateY(0em)' }, { transform: 'translateY(-1.2em)' }], 10.15, .35, POP);
-    add(E.strip, [{ transform: 'translateY(-1.2em)' }, { transform: 'translateY(-2.4em)' }], 10.85, .35, POP);
+    add(E.badge, [{ opacity: 0, transform: tf([b[0], b[1] + 8, 0, 1]) }, { opacity: 1, transform: tf([b[0], b[1], 0, 1]) }], 11.55, .45, EO);
+    add(E.strip, [{ transform: 'translateY(0em)' }, { transform: 'translateY(-1.2em)' }], 12.7, .35, POP);
+    add(E.strip, [{ transform: 'translateY(-1.2em)' }, { transform: 'translateY(-2.4em)' }], 13.4, .35, POP);
 
-    /* — 4. Stores — */
-    add(E.code, [{ opacity: 1, transform: tf([cx0, cy0, 0, 1]) }, { opacity: 0, transform: tf([cx0 - 30, cy0, 0, 1]) }], 11.1, .4, EIN);
-    add(E.badge, [{ opacity: 1 }, { opacity: 0 }], 11.1, .35);
-    add(E.contourSvg, [{ opacity: 0 }, { opacity: 1 }], 11.18, .05);
-    draw(E.contour, 11.2, .75, EIO);
-    add(E.contourSvg, [{ opacity: 1 }, { opacity: 0 }], 12.1, .45);
-    add(E.bezel, [{ opacity: 0 }, { opacity: 1 }], 11.7, .45, EO);
-    E.edges.forEach(function (el, i) { add(el, [{ opacity: 0 }, { opacity: 1 }], 11.8 + i * .035, .15); });
-    add(E.back, [{ opacity: 0 }, { opacity: 1 }], 12.0, .2);
-    add(E.buttons, [{ opacity: 0 }, { opacity: 1 }], 12.0, .2);
-    add(E.island, [{ opacity: 0, transform: 'scale(.2)' }, { opacity: 1, transform: 'scale(1)' }], 11.95, .45, POP);
-    add(E.glare, [{ opacity: 0 }, { opacity: 1 }], 12.05, .5);
-    add(E.glow, [{ scale: 0 }, { scale: 1 }], 12.0, .8, EO);
-    add(E.shadow, [{ opacity: 0 }, { opacity: 1 }], 12.0, .6);
+    /* — 5. Stores — */
+    add(E.code, [{ opacity: 1, transform: tf([cx0, cy0, 0, 1]) }, { opacity: 0, transform: tf([cx0 - 30, cy0, 0, 1]) }], 13.65, .4, EIN);
+    add(E.badge, [{ opacity: 1 }, { opacity: 0 }], 13.65, .35);
+    add(E.contourSvg, [{ opacity: 0 }, { opacity: 1 }], 13.73, .05);
+    draw(E.contour, 13.75, .75, EIO);
+    add(E.contourSvg, [{ opacity: 1 }, { opacity: 0 }], 14.65, .45);
+    add(E.bezel, [{ opacity: 0 }, { opacity: 1 }], 14.25, .45, EO);
+    E.edges.forEach(function (el, i) { add(el, [{ opacity: 0 }, { opacity: 1 }], 14.35 + i * .035, .15); });
+    add(E.back, [{ opacity: 0 }, { opacity: 1 }], 14.55, .2);
+    add(E.buttons, [{ opacity: 0 }, { opacity: 1 }], 14.55, .2);
+    add(E.island, [{ opacity: 0, transform: 'scale(.2)' }, { opacity: 1, transform: 'scale(1)' }], 14.5, .45, POP);
+    add(E.glare, [{ opacity: 0 }, { opacity: 1 }], 14.6, .5);
+    add(E.glow, [{ scale: 0 }, { scale: 1 }], 14.55, .8, EO);
+    add(E.shadow, [{ opacity: 0 }, { opacity: 1 }], 14.55, .6);
     var dy = P.dev.cyIntro - P.dev.cy;
-    if (dy) add(E.scene, [{ transform: 'translateY(' + px(dy) + ')' }, { transform: 'translateY(0px)' }], 11.85, .9, EO);
-    add(E.light, [{ transform: 'translateX(-130%)' }, { transform: 'translateX(130%)' }], 12.15, .6, 'ease-in-out');
+    if (dy) add(E.scene, [{ transform: 'translateY(' + px(dy) + ')' }, { transform: 'translateY(0px)' }], 14.4, .9, EO);
+    add(E.light, [{ transform: 'translateX(-130%)' }, { transform: 'translateX(130%)' }], 14.7, .6, 'ease-in-out');
     var pop = P.pop, inScreen = 'translateY(0%) translateZ(2px) scale(1)';
     var out = 'translateY(' + pop.y + '%) translateZ(' + px(pop.z) + ') scale(' + pop.s + ')';
-    add(E.notif, [{ opacity: 0, transform: 'translateY(-45%) translateZ(2px) scale(.94)' }, { opacity: 1, transform: inScreen }], 12.35, .5, 'cubic-bezier(.2, 1.25, .4, 1)');
-    add(E.notif, [{ transform: inScreen, boxShadow: '0 ' + px(4) + ' ' + px(10) + ' rgba(1, 1, 13, .22)' }, { transform: out, boxShadow: '0 ' + px(26) + ' ' + px(48) + ' rgba(1, 1, 13, .45)' }], 12.95, .75, 'cubic-bezier(.22, 1.45, .4, 1)');
-    draw(E.mint, 12.7, .6, EIO);
+    add(E.notif, [{ opacity: 0, transform: 'translateY(-45%) translateZ(2px) scale(.94)' }, { opacity: 1, transform: inScreen }], 14.9, .5, 'cubic-bezier(.2, 1.25, .4, 1)');
+    add(E.notif, [{ transform: inScreen, boxShadow: '0 ' + px(4) + ' ' + px(10) + ' rgba(1, 1, 13, .22)' }, { transform: out, boxShadow: '0 ' + px(26) + ' ' + px(48) + ' rgba(1, 1, 13, .45)' }], 15.5, .75, 'cubic-bezier(.22, 1.45, .4, 1)');
+    draw(E.mint, 15.25, .6, EIO);
     // Les cartes flottantes n'arrivent qu'une fois la notification partie.
-    E.chips.forEach(function (c, i) { add(c, [{ opacity: 0, scale: .6 }, { opacity: 1, scale: 1 }], 15.35 + i * .15, .45, POP); });
-    add(E.notif, [{ opacity: 1, transform: out }, { opacity: 0, transform: 'translateY(' + (pop.y - 60) + '%) translateZ(' + px(pop.z + 40) + ') scale(' + pop.s + ')' }], 15.4, .45, EIN);
-    add(E.live, [{ opacity: 0 }, { opacity: 1 }], 15.75, .05);
-    add(E.intro, [{ opacity: 1 }, { opacity: 0 }], 15.8, .15);
+    E.chips.forEach(function (c, i) { add(c, [{ opacity: 0, scale: .6 }, { opacity: 1, scale: 1 }], 17.9 + i * .15, .45, POP); });
+    add(E.notif, [{ opacity: 1, transform: out }, { opacity: 0, transform: 'translateY(' + (pop.y - 60) + '%) translateZ(' + px(pop.z + 40) + ') scale(' + pop.s + ')' }], 17.95, .45, EIN);
+    add(E.live, [{ opacity: 0 }, { opacity: 1 }], 18.3, .05);
+    add(E.intro, [{ opacity: 1 }, { opacity: 0 }], 18.35, .15);
 
     /* — Notes turquoise : écrites ligne à ligne, puis la flèche — */
     P.notes.forEach(function (n, i) {
@@ -483,7 +520,7 @@
   onScroll();
 
   function blend(t) {
-    var s = (t / SLOW - 11.85) / 1.0;
+    var s = (t / SLOW - 14.4) / 1.0;
     if (s <= 0) return 0;
     if (s >= 1) return 1;
     var c1 = 1.3, c3 = c1 + 1;
