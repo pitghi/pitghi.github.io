@@ -246,7 +246,7 @@ footer.bottom { border-top-color: var(--border); }
 @keyframes reveal { to { visibility: visible; } }
 
 /* Fiches papier des écrans croqués */
-.card { width: var(--cw); aspect-ratio: 920 / 2000; translate: -50% -50%; border-radius: 13.5% / 6.2%; background: #fff; box-shadow: 0 1.4cqw 3.2cqw rgba(1, 1, 13, .38); overflow: hidden; container-type: inline-size; opacity: 0; z-index: 2; }
+.sk-card { width: var(--cw); aspect-ratio: 920 / 2000; translate: -50% -50%; border-radius: 13.5% / 6.2%; background: #fff; box-shadow: 0 1.4cqw 3.2cqw rgba(1, 1, 13, .38); overflow: hidden; container-type: inline-size; opacity: 0; z-index: 2; }
 .sk { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .sk path:not([fill]) { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; stroke-dashoffset: 0; }
 .sk path:not([fill]):not([stroke]) { stroke: #2E2B45; }
@@ -263,7 +263,7 @@ footer.bottom { border-top-color: var(--border); }
 .postit { width: var(--post); aspect-ratio: 1; translate: -50% -50%; display: grid; place-items: center; padding: calc(var(--post) * .1); background: #FFE27A; color: #2E2B45; font-family: 'Caveat', 'Segoe Print', cursive; font-weight: 700; font-size: calc(var(--post) * .22); line-height: 1; text-align: center; box-shadow: 0 .6cqw 1.6cqw rgba(1, 1, 13, .35); opacity: 0; z-index: 5; }
 .postit svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .postit path { fill: none; stroke: #2E2B45; stroke-linecap: round; stroke-dasharray: 1 2; }
-.later { translate: -50% -50%; font-family: 'Caveat', 'Segoe Print', cursive; font-weight: 700; font-size: calc(var(--post) * .32); color: #fff; white-space: nowrap; opacity: 0; z-index: 5; }
+.later { translate: -50% -50%; font-family: 'Caveat', 'Segoe Print', cursive; font-weight: 700; font-size: calc(var(--post) * .32); color: var(--mint); white-space: nowrap; opacity: 0; z-index: 5; }
 .stamp { translate: -50% -50%; padding: .08em .42em .02em; border: .09em solid var(--mint); border-radius: .18em; color: var(--mint); font-family: var(--font-display); font-size: calc(var(--post) * .44); line-height: 1; letter-spacing: .04em; opacity: 0; z-index: 6; }
 
 /* Éditeur de code */
@@ -281,12 +281,15 @@ footer.bottom { border-top-color: var(--border); }
 /* Pastille de version : une version installable à chaque jalon */
 .badge { display: inline-flex; align-items: center; gap: .55em; margin: 0; padding: .5em .9em; border-radius: 999px; background: rgba(4, 3, 20, .82); border: 1px solid rgba(255, 255, 255, .16); color: #fff; font-family: var(--font-heading); font-weight: 600; font-size: 1.2cqw; white-space: nowrap; opacity: 0; z-index: 6; }
 .badge i { width: .55em; height: .55em; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 .25em rgba(136, 249, 192, .22); }
-.badge-label { display: grid; } .badge-label > span { grid-area: 1 / 1; }
-.badge [data-bl="0"] { opacity: 0; }
 .badge-num { display: inline-block; height: 1.2em; overflow: hidden; color: var(--mint); font-variant-numeric: tabular-nums; }
-.badge-num [data-strip] { display: flex; flex-direction: column; transform: translateY(-3.6em); }
+.badge-num [data-strip] { display: flex; flex-direction: column; transform: translateY(-2.4em); }
 .badge-num b { display: block; height: 1.2em; line-height: 1.2em; font-weight: 700; }
 
+/* Notes turquoise : ce que le studio garantit, écrit à la main sur la scène */
+.hero-note { margin: 0; font-family: 'Caveat', 'Segoe Print', cursive; font-weight: 700; font-size: 2.5cqw; line-height: 1.02; color: var(--mint); white-space: nowrap; opacity: 0; z-index: 7; text-shadow: 0 1px 14px rgba(1, 1, 13, .3); }
+.hero-note span { display: block; }
+.note-ink { width: 100%; height: 100%; overflow: visible; z-index: 7; pointer-events: none; }
+.note-ink path { fill: none; stroke: var(--mint); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; }
 .finger { width: 7cqw; translate: -26% -4.7%; transform-origin: 26% 4.7%; opacity: 0; z-index: 8; filter: drop-shadow(0 .6cqw 1cqw rgba(1, 1, 13, .3)); }
 .finger svg { display: block; width: 100%; height: auto; overflow: visible; }
 .finger path:not([fill]) { fill: none; stroke: #2E2B45; stroke-linecap: round; }
@@ -351,14 +354,6 @@ footer.bottom { border-top-color: var(--border); }
 .screen-flash[data-flash="2"] { left: 5.2%; right: 5.2%; top: 41.2%; height: 29.9%; border-radius: 6cqw; }
 .screen-flash[data-flash="3"] { left: 5.2%; right: 5.2%; top: 71.8%; height: 27.6%; border-radius: 6cqw; }
 .screen-scan { left: 0; right: 0; top: -6%; height: 6%; position: absolute; background: linear-gradient(180deg, rgba(136, 249, 192, 0), rgba(136, 249, 192, .4)); border-bottom: 2px solid var(--mint); box-shadow: 0 6px 14px rgba(136, 249, 192, .55); opacity: 0; }
-/* Notification « disponible sur l'App Store » */
-.screen-notif { position: absolute; z-index: 12; top: 6.4%; left: 3.6%; right: 3.6%; display: flex; gap: 3cqw; align-items: center; padding: 3.2cqw 3.6cqw; border-radius: 6.5cqw; background: rgba(246, 246, 250, .9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 3cqw 8cqw rgba(1, 1, 13, .28); font-family: 'Noto Sans', system-ui, -apple-system, sans-serif; color: #0A0A0A; transform: translateY(-170%); }
-.screen-notif img { width: 11cqw; height: 11cqw; border-radius: 2.6cqw; flex: none; }
-.screen-notif p { display: grid; gap: .5cqw; margin: 0; min-width: 0; font-size: 3.4cqw; line-height: 1.2; }
-.screen-notif .n-top { display: flex; justify-content: space-between; color: #6b6b75; font-size: 2.8cqw; text-transform: uppercase; letter-spacing: .03em; }
-.screen-notif .n-top b { font-weight: 600; }
-.screen-notif .n-title { font-weight: 700; }
-.screen-notif .n-sub { color: #55555f; }
 .screen-light { position: absolute; inset: 0; z-index: 11; background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .7) 48%, transparent 66%); transform: translateX(-130%); pointer-events: none; }
 .device-glare { position: absolute; inset: 0; border-radius: var(--r); pointer-events: none; background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .28) 46%, rgba(255, 255, 255, .06) 52%, transparent 62%); background-size: 300% 100%; background-position: var(--gx) 0; mix-blend-mode: screen; }
 .device-contour { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: 0; pointer-events: none; }
@@ -366,12 +361,22 @@ footer.bottom { border-top-color: var(--border); }
 .device-glow { position: absolute; inset: 10% -40%; border-radius: 50%; background: radial-gradient(closest-side, rgba(136, 249, 192, .55), rgba(136, 249, 192, 0) 70%); filter: blur(30px); animation: glow 6s ease-in-out infinite; z-index: -1; }
 .device-shadow { position: absolute; left: 12%; right: 12%; bottom: -9%; height: 7%; border-radius: 50%; background: radial-gradient(closest-side, rgba(1, 1, 13, .75), transparent); filter: blur(6px); transform: scale(var(--ss, 1)); }
 
+/* Notification « disponible sur l'App Store » : elle tombe dans l'écran, puis
+   s'en détache et vient vers le visiteur (translateZ), au-dessus du téléphone. */
+.device-notif { position: absolute; z-index: 5; top: calc(var(--w) * .16); left: 6.5%; right: 6.5%; display: flex; gap: calc(var(--w) * .03); align-items: center; margin: 0; padding: calc(var(--w) * .035) calc(var(--w) * .04); border-radius: calc(var(--w) * .07); background: rgba(246, 246, 250, .95); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 calc(var(--w) * .02) calc(var(--w) * .05) rgba(1, 1, 13, .22); font-family: 'Noto Sans', system-ui, -apple-system, sans-serif; color: #0A0A0A; opacity: 0; transform: translateZ(2px); transform-origin: 50% 0; pointer-events: none; }
+.device-notif img { width: calc(var(--w) * .12); height: calc(var(--w) * .12); border-radius: calc(var(--w) * .028); flex: none; }
+.device-notif p { display: grid; gap: calc(var(--w) * .006); margin: 0; min-width: 0; font-size: calc(var(--w) * .043); line-height: 1.2; }
+.device-notif .n-top { display: flex; justify-content: space-between; gap: .6em; color: #6b6b75; font-size: calc(var(--w) * .032); text-transform: uppercase; letter-spacing: .03em; }
+.device-notif .n-top b { font-weight: 600; }
+.device-notif .n-title { font-weight: 700; }
+.device-notif .n-sub { color: #55555f; font-size: calc(var(--w) * .036); }
+
 /* Cartes flottantes : de vraies données de l'app, posées devant le
    téléphone (translateZ) pour que la profondeur se lise en mouvement. */
 .chip { --cz: 70px; position: absolute; display: grid; grid-template-columns: auto auto; column-gap: .55rem; align-items: center; padding: .6rem .8rem; border-radius: 14px; background: rgba(4, 3, 20, .78); border: 1px solid rgba(255, 255, 255, .14); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #fff; white-space: nowrap; box-shadow: 0 18px 40px rgba(1, 1, 13, .45); transform: translateZ(var(--cz)); animation: bob 5s ease-in-out infinite; }
 .chip b { font-size: .78rem; font-weight: 600; grid-column: 2; }
 .chip small { grid-column: 2; font-size: .68rem; color: var(--muted); }
-.chip--a { --cz: 90px; top: 22%; left: -48%; grid-template-columns: auto; }
+.chip--a { --cz: 90px; top: 30%; left: -48%; grid-template-columns: auto; }
 .chip--a b, .chip--a small { grid-column: 1; }
 .chip--a::before { content: ""; position: absolute; left: -4px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgba(136, 249, 192, .25); }
 .chip--b { --cz: 55px; top: 48%; right: -58%; animation-delay: -1.6s; }
@@ -406,10 +411,11 @@ footer.bottom { border-top-color: var(--border); }
   .code { width: 95.6cqw; font-size: 3.05cqw; }
   .badge { font-size: 3.3cqw; }
   .finger { width: 17cqw; }
+  .hero-note { font-size: 5.4cqw; }
   .ring { width: 10cqw; }
   .chip { padding: .45rem .6rem; }
   .chip b { font-size: .72rem; } .chip small { font-size: .64rem; }
-  .chip--a { left: -26%; } .chip--b { right: -28%; } .chip--c { left: -20%; }
+  .chip--a { top: 38%; left: -26%; } .chip--b { top: 58%; right: -28%; } .chip--c { left: -20%; }
   .rail { grid-template-columns: auto; justify-items: center; }
   .rail-steps { gap: .3rem 1rem; }
   .rail-steps button { font-size: .6rem; letter-spacing: .12em; }

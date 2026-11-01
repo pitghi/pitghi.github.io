@@ -126,7 +126,15 @@
       stamp: [186, 26, -12],
       postIn: [642, 362, 4, 1], postOut: [920, 330, 9, 1], later: [920, 400, -5, 1],
       code: [40, 80], badge: [614, 30],
-      fingerIn: [740, 540], fingerOut: [780, 560]
+      fingerIn: [740, 540], fingerOut: [780, 560],
+      pop: { z: 110, s: 1.4, y: -5 },
+      // [apparition, disparition], texte, [x, y, rotation], flèche [x0, y0, x1, y1, courbure]
+      notes: [
+        { t: [2.0, 3.75], text: 'on teste au crayon,\navant le code', at: [790, 58, -3], arrow: [800, 136, 590, 166, -.22] },
+        { t: [5.3, 7.2], text: 'périmètre\nécrit =\nprix ferme', at: [10, 150, -4], arrow: [62, 252, 132, 300, .28] },
+        { t: [9.15, 11.1], text: 'une version à tester\nà chaque jalon', at: [690, 118, -3], arrow: [702, 112, 694, 68, .3] },
+        { t: [13.05, 15.45], text: 'en ligne,\nsous vos comptes', at: [712, 104, -3], arrow: [708, 114, 640, 76, -.2] }
+      ]
     },
     tall: {
       W: 360,
@@ -140,10 +148,17 @@
       stamp: [42, 28, -12],
       postIn: [147, 128, 4, 1], postOut: [326, 150, 9, 1], later: [326, 204, -6, 1],
       code: [8, 6], badge: [8, 224],
-      fingerIn: [330, 720], fingerOut: [350, 740]
+      fingerIn: [330, 720], fingerOut: [350, 740],
+      pop: { z: 100, s: 1.7, y: -6 },
+      notes: [
+        { t: [1.35, 2.65], text: 'on teste au crayon,\navant le code', at: [96, 118, -3], arrow: [180, 172, 186, 244, .18] },
+        { t: [5.3, 7.2], text: 'périmètre\nécrit =\nprix ferme', at: [18, 300, -4], arrow: null },
+        { t: [9.15, 11.1], text: 'à tester\nà chaque\njalon', at: [14, 264, -3], arrow: null },
+        { t: [13.05, 15.45], text: 'en ligne, sous vos comptes', at: [74, 34, -3], arrow: [180, 68, 182, 132, .15] }
+      ]
     }
   };
-  var PH = [0, 4.1, 7.2, 11.1], END = 15.1, SHOW = [4.05, 7.17, 10.98, END];
+  var PH = [0, 4.1, 7.2, 11.1], END = 16.0, SHOW = [4.05, 7.17, 10.98, END];
   var EO = 'cubic-bezier(.16, 1, .3, 1)', EIO = 'cubic-bezier(.65, 0, .35, 1)', EIN = 'cubic-bezier(.55, 0, .8, .25)';
   var POP = 'cubic-bezier(.34, 1.56, .64, 1)', DRAW = 'cubic-bezier(.45, .05, .25, 1)';
 
@@ -158,7 +173,7 @@
     cardL: q('[data-card="carte"]'), cardR: q('[data-card="depenses"]'),
     ink: q('[data-ink]'), postit: q('[data-postit]'), later: q('[data-later]'), stamp: q('[data-stamp]'),
     code: q('[data-code]'), lines: qa('[data-line]'), badge: q('[data-badge]'),
-    bl0: q('[data-bl="0"]'), bl1: q('[data-bl="1"]'), strip: q('[data-strip]'),
+    strip: q('[data-strip]'), noteInk: q('[data-note-ink]'), notes: qa('[data-note]'),
     finger: q('[data-finger]'), ring: q('[data-ring]')
   };
   E.hls = E.lines.map(function (li) { return q('.hl', li); });
@@ -216,29 +231,35 @@
   }
 
   // Flèches et cadre, recalculés à chaque mise en page (en pixels de scène).
-  function mk(cls) { var p = document.createElementNS(SVGNS, 'path'); p.setAttribute('class', cls); p.setAttribute('pathLength', '1'); E.ink.appendChild(p); return p; }
+  function mk(svg, cls) { var p = document.createElementNS(SVGNS, 'path'); p.setAttribute('class', cls); p.setAttribute('pathLength', '1'); svg.appendChild(p); return p; }
   function f1(v) { return v.toFixed(1); }
+  function clear(svg) {
+    svg.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+  }
+  // Une flèche tracée à la main : une tige doublée, puis la pointe.
+  function arrow(svg, cls, a, bend) {
+    var x0 = a[0] * u, y0 = a[1] * u, x1 = a[2] * u, y1 = a[3] * u;
+    var dx = x1 - x0, dy = y1 - y0, len = Math.sqrt(dx * dx + dy * dy);
+    var cx = (x0 + x1) / 2 - dy * bend, cy = (y0 + y1) / 2 + dx * bend, j = Math.max(1.2, len * .02);
+    var shaft = mk(svg, cls), head = mk(svg, cls);
+    shaft.setAttribute('d', 'M' + f1(x0) + ' ' + f1(y0) + ' Q' + f1(cx) + ' ' + f1(cy) + ' ' + f1(x1) + ' ' + f1(y1) +
+      ' M' + f1(x0 + j) + ' ' + f1(y0 - j * .6) + ' Q' + f1(cx - j) + ' ' + f1(cy + j) + ' ' + f1(x1 - j * .4) + ' ' + f1(y1 + j * .5));
+    var ax = x1 - cx, ay = y1 - cy, al = Math.sqrt(ax * ax + ay * ay); ax /= al; ay /= al;
+    var h = Math.min(12 * u * (P.W === 1000 ? 1 : 1.6), len * .3), w = h * .62;
+    head.setAttribute('d', 'M' + f1(x1 - ax * h - ay * w) + ' ' + f1(y1 - ay * h + ax * w) + ' L' + f1(x1) + ' ' + f1(y1) + ' L' + f1(x1 - ax * h + ay * w) + ' ' + f1(y1 - ay * h - ax * w));
+    return [shaft, head];
+  }
   function layoutInk() {
-    E.ink.setAttribute('viewBox', '0 0 ' + stage.clientWidth + ' ' + stage.clientHeight);
-    while (E.ink.firstChild) E.ink.removeChild(E.ink.firstChild);
-    var arrows = P.arrows.map(function (a, i) {
-      var x0 = a[0] * u, y0 = a[1] * u, x1 = a[2] * u, y1 = a[3] * u;
-      var dx = x1 - x0, dy = y1 - y0, len = Math.sqrt(dx * dx + dy * dy), bend = (i ? -1 : 1) * .16;
-      var cx = (x0 + x1) / 2 - dy * bend, cy = (y0 + y1) / 2 + dx * bend, j = Math.max(1.2, len * .02);
-      var shaft = mk('ink-arrow'), head = mk('ink-arrow');
-      shaft.setAttribute('d', 'M' + f1(x0) + ' ' + f1(y0) + ' Q' + f1(cx) + ' ' + f1(cy) + ' ' + f1(x1) + ' ' + f1(y1) +
-        ' M' + f1(x0 + j) + ' ' + f1(y0 - j * .6) + ' Q' + f1(cx - j) + ' ' + f1(cy + j) + ' ' + f1(x1 - j * .4) + ' ' + f1(y1 + j * .5));
-      var ax = x1 - cx, ay = y1 - cy, al = Math.sqrt(ax * ax + ay * ay); ax /= al; ay /= al;
-      var h = Math.min(12 * u * (P.W === 1000 ? 1 : 1.6), len * .3), w = h * .62;
-      head.setAttribute('d', 'M' + f1(x1 - ax * h - ay * w) + ' ' + f1(y1 - ay * h + ax * w) + ' L' + f1(x1) + ' ' + f1(y1) + ' L' + f1(x1 - ax * h + ay * w) + ' ' + f1(y1 - ay * h - ax * w));
-      return [shaft, head];
-    });
+    clear(E.ink); clear(E.noteInk);
+    var arrows = P.arrows.map(function (a, i) { return arrow(E.ink, 'ink-arrow', a, (i ? -1 : 1) * .16); });
+    var noteArrows = P.notes.map(function (n) { return n.arrow ? arrow(E.noteInk, '', n.arrow, n.arrow[4]) : null; });
     var f = P.frame, x = f[0] * u, y = f[1] * u, w = f[2] * u, hh = f[3] * u, r = f[4] * u;
-    var frame = mk('ink-frame');
+    var frame = mk(E.ink, 'ink-frame');
     frame.setAttribute('d', 'M' + f1(x + r) + ' ' + f1(y) + ' H' + f1(x + w - r) + ' A' + f1(r) + ' ' + f1(r) + ' 0 0 1 ' + f1(x + w) + ' ' + f1(y + r) +
       ' V' + f1(y + hh - r) + ' A' + f1(r) + ' ' + f1(r) + ' 0 0 1 ' + f1(x + w - r) + ' ' + f1(y + hh) + ' H' + f1(x + r) +
       ' A' + f1(r) + ' ' + f1(r) + ' 0 0 1 ' + f1(x) + ' ' + f1(y + hh - r) + ' V' + f1(y + r) + ' A' + f1(r) + ' ' + f1(r) + ' 0 0 1 ' + f1(x + r) + ' ' + f1(y));
-    return { arrows: arrows, frame: frame };
+    return { arrows: arrows, frame: frame, notes: noteArrows };
   }
 
   // Position (en unités) d'un point de l'écran croqué, pendant l'intro.
@@ -337,6 +358,7 @@
 
     /* — 4. Stores — */
     add(E.code, [{ opacity: 1, transform: tf([cx0, cy0, 0, 1]) }, { opacity: 0, transform: tf([cx0 - 30, cy0, 0, 1]) }], 11.1, .4, EIN);
+    add(E.badge, [{ opacity: 1 }, { opacity: 0 }], 11.1, .35);
     add(E.contourSvg, [{ opacity: 0 }, { opacity: 1 }], 11.18, .05);
     draw(E.contour, 11.2, .75, EIO);
     add(E.contourSvg, [{ opacity: 1 }, { opacity: 0 }], 12.1, .45);
@@ -351,16 +373,34 @@
     var dy = P.dev.cyIntro - P.dev.cy;
     if (dy) add(E.scene, [{ transform: 'translateY(' + px(dy) + ')' }, { transform: 'translateY(0px)' }], 11.85, .9, EO);
     add(E.light, [{ transform: 'translateX(-130%)' }, { transform: 'translateX(130%)' }], 12.15, .6, 'ease-in-out');
-    add(E.notif, [{ transform: 'translateY(-170%)' }, { transform: 'translateY(0%)' }], 12.35, .6, 'cubic-bezier(.2, 1.25, .4, 1)');
-    add(E.strip, [{ transform: 'translateY(-2.4em)' }, { transform: 'translateY(-3.6em)' }], 12.45, .35, POP);
-    add(E.bl0, [{ opacity: 1 }, { opacity: 0 }], 12.45, .25);
-    add(E.bl1, [{ opacity: 0 }, { opacity: 1 }], 12.5, .3);
+    var pop = P.pop, inScreen = 'translateY(0%) translateZ(2px) scale(1)';
+    var out = 'translateY(' + pop.y + '%) translateZ(' + px(pop.z) + ') scale(' + pop.s + ')';
+    add(E.notif, [{ opacity: 0, transform: 'translateY(-45%) translateZ(2px) scale(.94)' }, { opacity: 1, transform: inScreen }], 12.35, .5, 'cubic-bezier(.2, 1.25, .4, 1)');
+    add(E.notif, [{ transform: inScreen, boxShadow: '0 ' + px(4) + ' ' + px(10) + ' rgba(1, 1, 13, .22)' }, { transform: out, boxShadow: '0 ' + px(26) + ' ' + px(48) + ' rgba(1, 1, 13, .45)' }], 12.95, .75, 'cubic-bezier(.22, 1.45, .4, 1)');
     draw(E.mint, 12.7, .6, EIO);
-    E.chips.forEach(function (c, i) { add(c, [{ opacity: 0, scale: .6 }, { opacity: 1, scale: 1 }], 13.0 + i * .2, .5, POP); });
-    add(E.badge, [{ opacity: 1 }, { opacity: 0 }], 14.3, .4);
-    add(E.notif, [{ transform: 'translateY(0%)' }, { transform: 'translateY(-170%)' }], 14.55, .45, EIO);
-    add(E.live, [{ opacity: 0 }, { opacity: 1 }], 14.9, .05);
-    add(E.intro, [{ opacity: 1 }, { opacity: 0 }], 14.95, .15);
+    E.chips.forEach(function (c, i) { add(c, [{ opacity: 0, scale: .6 }, { opacity: 1, scale: 1 }], 13.3 + i * .2, .5, POP); });
+    add(E.notif, [{ opacity: 1, transform: out }, { opacity: 0, transform: 'translateY(' + (pop.y - 60) + '%) translateZ(' + px(pop.z + 40) + ') scale(' + pop.s + ')' }], 15.4, .45, EIN);
+    add(E.live, [{ opacity: 0 }, { opacity: 1 }], 15.75, .05);
+    add(E.intro, [{ opacity: 1 }, { opacity: 0 }], 15.8, .15);
+
+    /* — Notes turquoise : écrites ligne à ligne, puis la flèche — */
+    P.notes.forEach(function (n, i) {
+      var el = E.notes[i];
+      if (!el) return;
+      el.textContent = '';
+      n.text.split('\n').forEach(function (line) { var sp = document.createElement('span'); sp.textContent = line; el.appendChild(sp); });
+      el.style.transform = tf(n.at);
+      add(el, [{ opacity: 0 }, { opacity: 1 }], n.t[0], .05);
+      [].forEach.call(el.children, function (sp, k) { wipe(sp, n.t[0] + k * .22, .42); });
+      var lineCount = el.children.length;
+      if (ink.notes[i]) {
+        var at = n.t[0] + lineCount * .22 + .1;
+        draw(ink.notes[i][0], at, .35, DRAW);
+        draw(ink.notes[i][1], at + .32, .14, 'ease-out');
+        ink.notes[i].forEach(function (pth) { add(pth, [{ opacity: 1 }, { opacity: 0 }], n.t[1] - .25, .25); });
+      }
+      add(el, [{ opacity: 1 }, { opacity: 0 }], n.t[1] - .25, .25);
+    });
   }
 
   /* ——— Lecture : pause, reprise, retour à une étape ——— */
