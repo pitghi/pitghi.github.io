@@ -388,7 +388,7 @@ footer.bottom { border-top-color: var(--border); }
 .chip-avatars i:first-child { margin-left: 0; background: var(--mint); color: var(--onyx); }
 
 /* ——— Frise des étapes : on sait toujours où on en est, et on peut y revenir ——— */
-.rail { grid-area: rail; justify-self: center; position: relative; z-index: 4; display: grid; grid-template-columns: auto auto; column-gap: 1.6rem; row-gap: .35rem; align-items: center; margin-top: clamp(.5rem, 1.2cqw, .8rem); color: #fff; font-family: var(--font-heading); }
+.rail { grid-area: rail; justify-self: center; position: relative; z-index: 4; display: grid; grid-template-columns: auto; column-gap: 1.6rem; row-gap: .35rem; align-items: center; margin-top: clamp(.5rem, 1.2cqw, .8rem); color: #fff; font-family: var(--font-heading); }
 .rail-steps { grid-column: 1; grid-row: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem clamp(.9rem, 2.6cqw, 2.2rem); list-style: none; margin: 0; padding: 0; }
 .rail-steps li { margin: 0; }
 .rail-steps button { display: flex; align-items: center; gap: .55em; padding: .3em 0; border: 0; background: none; color: rgba(255, 255, 255, .55); font: inherit; font-size: .68rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; transition: color .3s; }
@@ -401,8 +401,12 @@ footer.bottom { border-top-color: var(--border); }
 .rail-steps button:focus-visible, .rail-replay:focus-visible { outline: 2px solid var(--mint); outline-offset: 4px; border-radius: 6px; }
 .rail-track { grid-column: 1; grid-row: 2; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .18); overflow: hidden; }
 .rail-fill { display: block; height: 100%; background: var(--mint); transform-origin: left; transform: scaleX(var(--p, 1)); }
-.rail-replay { grid-column: 2; grid-row: 1 / span 2; display: inline-flex; align-items: center; gap: .45em; padding: .5em .9em; border: 1.5px solid rgba(255, 255, 255, .45); border-radius: 999px; background: none; color: #fff; font: inherit; font-size: .68rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: border-color .2s, background .2s; }
-.rail-replay:hover { border-color: #fff; background: rgba(255, 255, 255, .08); }
+.rail-steps, .rail-track { transition: opacity .5s ease, visibility 0s; }
+/* « Revoir » n'apparaît qu'à la fin, discret, à la place de la frise. */
+.rail-replay { grid-column: 1; grid-row: 1 / span 2; justify-self: center; align-self: center; display: inline-flex; align-items: center; gap: .45em; padding: .45em .85em; border: 0; border-radius: 999px; background: none; color: rgba(255, 255, 255, .6); font: inherit; font-size: .66rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s .5s, color .2s, background .2s; }
+.rail.is-ended .rail-steps, .rail.is-ended .rail-track { opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s .5s; }
+.rail.is-ended .rail-replay { opacity: 1; visibility: visible; transition: opacity .6s ease .3s, visibility 0s, color .2s, background .2s; }
+.rail-replay:hover { color: #fff; background: rgba(255, 255, 255, .08); }
 .rail-replay[hidden] { display: none; }
 .rail-replay svg { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -422,7 +426,6 @@ footer.bottom { border-top-color: var(--border); }
   .rail-steps { gap: .3rem 1rem; }
   .rail-steps button { font-size: .6rem; letter-spacing: .12em; }
   .rail-track { width: 100%; }
-  .rail-replay { grid-column: 1; grid-row: 3; margin-top: .5rem; }
 }
 @media (max-width: 720px) {
   .poster-foot { grid-template-columns: 1fr; }

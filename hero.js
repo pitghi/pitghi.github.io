@@ -1,5 +1,5 @@
 /* Hero de l'accueil : « Votre app, du croquis aux stores, sans détour ».
-   Un scénario d'environ 15 s en quatre temps, suivis par la frise sous la scène :
+   Un scénario d'environ 19 s en quatre temps, suivis par la frise sous la scène :
    1. Croquis : trois écrans de Maurice se dessinent au crayon. Un doigt
       dessiné tape « Carte » puis « Dépenses » : le prototype papier vit déjà.
    2. Cadrage : les fiches se rangent en parcours, le trait menthe trace le
@@ -158,7 +158,11 @@
       ]
     }
   };
-  var PH = [0, 4.1, 7.2, 11.1], END = 16.1, SHOW = [4.05, 7.17, 10.98, END];
+  // Les temps du scénario sont écrits en secondes « de travail », puis tout
+  // est ralenti d'un même facteur pour laisser le temps de lire.
+  var SLOW = 1.2;
+  function slow(t) { return t * SLOW; }
+  var PH = [0, 4.1, 7.2, 11.1].map(slow), END = slow(16.1), SHOW = [4.05, 7.17, 10.98, 16.1].map(slow);
   var EO = 'cubic-bezier(.16, 1, .3, 1)', EIO = 'cubic-bezier(.65, 0, .35, 1)', EIN = 'cubic-bezier(.55, 0, .8, .25)';
   var POP = 'cubic-bezier(.34, 1.56, .64, 1)', DRAW = 'cubic-bezier(.45, .05, .25, 1)';
 
@@ -189,7 +193,7 @@
     var s = seen.get(el); if (!s) { s = {}; seen.set(el, s); }
     var fresh = props.every(function (p) { return !s[p]; });
     props.forEach(function (p) { s[p] = 1; });
-    var a = el.animate(kf, { duration: Math.max(1, dur * 1000), delay: at * 1000, easing: ease || EO, fill: fresh ? 'both' : 'forwards' });
+    var a = el.animate(kf, { duration: Math.max(1, dur * 1000 * SLOW), delay: at * 1000 * SLOW, easing: ease || EO, fill: fresh ? 'both' : 'forwards' });
     a.pause();
     anims.push(a);
     return a;
@@ -422,6 +426,7 @@
   }
   function replay(from) {
     live.reset();
+    rail.classList.remove('is-ended');
     ended = false;
     playing = false;
     seek(from || 0);
@@ -430,6 +435,8 @@
   }
   function onEnd() {
     ended = true;
+    // À la fin, la frise s'efface : il reste le téléphone et « Revoir ».
+    if (!reduce) rail.classList.add('is-ended');
     setTimeout(function () { if (ended && visible) live.start(); }, 900);
   }
   stepBtns.forEach(function (btn, i) {
@@ -476,7 +483,7 @@
   onScroll();
 
   function blend(t) {
-    var s = (t - 11.85) / 1.0;
+    var s = (t / SLOW - 11.85) / 1.0;
     if (s <= 0) return 0;
     if (s >= 1) return 1;
     var c1 = 1.3, c3 = c1 + 1;
@@ -505,7 +512,8 @@
   }
   function loop() { if (!looping && visible) { looping = true; requestAnimationFrame(frame); } }
 
-  // Hors écran : pause. Au retour en haut de page après la fin : on rejoue.
+  // Hors écran : pause. Une fois l'intro finie, le téléphone reste : on ne rejoue
+  // que si le visiteur le demande (bouton « Revoir »).
   var away = false, wasPlaying = false;
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
@@ -514,8 +522,7 @@
       if (vis === visible) return;
       visible = vis;
       if (!vis) { wasPlaying = playing; pause(); live.stop(); return; }
-      if (ended && away && window.scrollY < 80 && !reduce) replay(0);
-      else if (wasPlaying) play();
+      if (wasPlaying) play();
       else if (ended) live.start();
       away = false;
       loop();
