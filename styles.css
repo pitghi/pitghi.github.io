@@ -245,15 +245,6 @@ footer.bottom { border-top-color: var(--border); }
 .intro .stage:not(.is-ready) { visibility: hidden; animation: reveal 0s 2.5s forwards; }
 @keyframes reveal { to { visibility: visible; } }
 
-/* Fiches papier des écrans croqués */
-.sk-card { width: var(--cw); aspect-ratio: 920 / 2000; translate: -50% -50%; border-radius: 13.5% / 6.2%; background: #fff; box-shadow: 0 1.4cqw 3.2cqw rgba(1, 1, 13, .38); overflow: hidden; container-type: inline-size; opacity: 0; z-index: 2; }
-.sk { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.sk path:not([fill]) { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; stroke-dashoffset: 0; }
-.sk path:not([fill]):not([stroke]) { stroke: #2E2B45; }
-.sk g[data-k^="pin"] { transform-box: fill-box; transform-origin: center; }
-.hw { position: absolute; font-family: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive; font-weight: 500; color: #2E2B45; line-height: 1; white-space: nowrap; transform: translateY(-50%); }
-.hw--c { transform: translate(-50%, -50%); }
-.hw--b { font-weight: 700; }
 
 /* Flèches et cadre du périmètre */
 .stage-ink { width: 100%; height: 100%; overflow: visible; z-index: 4; pointer-events: none; }
@@ -266,6 +257,17 @@ footer.bottom { border-top-color: var(--border); }
 .keep { translate: -50% -50%; display: inline-flex; align-items: center; gap: .35em; margin: 0; padding: .32em .75em .32em .55em; border-radius: 999px; background: var(--mint); color: var(--onyx); font-family: var(--font-heading); font-weight: 700; font-size: 1.3cqw; line-height: 1.1; white-space: nowrap; box-shadow: 0 .5cqw 1.4cqw rgba(1, 1, 13, .35); opacity: 0; z-index: 6; }
 .keep svg { width: 1.05em; height: 1.05em; flex: none; overflow: visible; }
 .keep path { fill: none; stroke: var(--onyx); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; }
+
+/* Atelier de cadrage : des post-it collés au mur, puis triés (MVP / plus tard) */
+.stage { --pi-w: 15cqw; --pi-h: 9.2cqw; --pi-fs: 2.25cqw; }
+.postit { width: var(--pi-w); height: var(--pi-h); translate: -50% -50%; display: grid; place-items: center; padding: 0 .55em; background: #FFE27A; color: #2E2B45; font-family: 'Caveat', 'Segoe Print', cursive; font-weight: 700; font-size: var(--pi-fs); line-height: 1.02; text-align: center; box-shadow: 0 .45cqw 1.1cqw rgba(1, 1, 13, .35); opacity: 0; z-index: 3; }
+.postit span { display: block; }
+.postit--ctx { background: #D9CCFF; }
+.pi-check { position: absolute; right: -.5em; top: -.55em; display: grid; place-items: center; width: 1.45em; height: 1.45em; border-radius: 50%; background: var(--mint); box-shadow: 0 .2em .5em rgba(1, 1, 13, .3); opacity: 0; }
+.pi-check svg { width: 62%; height: 62%; overflow: visible; }
+.pi-check path { fill: none; stroke: var(--onyx); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; }
+.board-label { translate: -50% -50%; margin: 0; font-family: 'Caveat', 'Segoe Print', cursive; font-weight: 700; font-size: 2.6cqw; line-height: 1; color: #fff; white-space: nowrap; opacity: 0; z-index: 3; }
+.board-label--muted { color: rgba(255, 255, 255, .55); }
 
 /* Étape Design : le même écran en trois pistes visuelles ; on en garde une */
 .piste { width: var(--cw); aspect-ratio: 920 / 2000; translate: -50% -50%; border-radius: 13.5% / 6.2%; overflow: hidden; background: #fff; box-shadow: 0 1.2cqw 3cqw rgba(1, 1, 13, .4); opacity: 0; z-index: 2; }
@@ -298,10 +300,6 @@ footer.bottom { border-top-color: var(--border); }
 .hero-note span { display: block; }
 .note-ink { width: 100%; height: 100%; overflow: visible; z-index: 7; pointer-events: none; }
 .note-ink path { fill: none; stroke: var(--mint); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; }
-.finger { width: 7cqw; translate: -26% -4.7%; transform-origin: 26% 4.7%; opacity: 0; z-index: 8; filter: drop-shadow(0 .6cqw 1cqw rgba(1, 1, 13, .3)); }
-.finger svg { display: block; width: 100%; height: auto; overflow: visible; }
-.finger path:not([fill]) { fill: none; stroke: #2E2B45; stroke-linecap: round; }
-.ring { width: 4.4cqw; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; border: 2px solid rgba(46, 43, 69, .8); opacity: 0; z-index: 8; }
 
 /* ——— Téléphone 3D ———
    Une face avant (les écrans réels de Maurice), dix tranches empilées pour
@@ -349,7 +347,7 @@ footer.bottom { border-top-color: var(--border); }
 
 /* Couches de l'intro, posées sur l'écran : croquis → fil de fer → vrai écran */
 .screen-intro { position: absolute; inset: 0; z-index: 3; background: #fff; opacity: 0; pointer-events: none; }
-.screen-wire, .screen-sketch { position: absolute; inset: 0; }
+.screen-wire { position: absolute; inset: 0; }
 .screen-wire svg { display: block; width: 100%; height: 100%; }
 .screen-real { position: absolute; inset: 0; background: url(assets/ecrans/base.jpg) 0 0 / 100% 100%; }
 .screen-real[data-real="0"] { clip-path: inset(0 0 66% 0); }
@@ -422,12 +420,12 @@ footer.bottom { border-top-color: var(--border); }
   .device-scene { --w: 47.78cqw; top: 51.56%; }
   .code { width: 95.6cqw; font-size: 3.05cqw; }
   .badge { font-size: 3.3cqw; }
-  .finger { width: 17cqw; }
-  .keep { font-size: 3.4cqw; }
+    .keep { font-size: 3.4cqw; }
   .piste-label { font-size: 2.5cqw; letter-spacing: .05em; gap: .25em; }
+  .stage { --pi-w: 31cqw; --pi-h: 20cqw; --pi-fs: 4.6cqw; }
+  .board-label { font-size: 5.6cqw; }
   .hero-note { font-size: 5.4cqw; }
-  .ring { width: 10cqw; }
-  .chip { padding: .45rem .6rem; }
+    .chip { padding: .45rem .6rem; }
   .chip b { font-size: .72rem; } .chip small { font-size: .64rem; }
   .chip--a { top: -26%; left: -20%; } .chip--b { top: -15%; right: -24%; } .chip--c { bottom: -22%; left: 4%; }
   .rail { grid-template-columns: auto; justify-items: center; }
