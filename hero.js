@@ -23,8 +23,21 @@
   var panels = {};
   Array.prototype.forEach.call(device.querySelectorAll('[data-tab]'), function (el) { panels[el.getAttribute('data-tab')] = el; });
   var tap = device.querySelector('.device-tap');
-  var route = [0, 1, 5, 6];   // Étapes → Carte → Dépenses → Lexique → Étapes…
-  var step = 0, scrollX = 0;
+  /* Le parcours : des onglets et deux feuilles modales. Les positions de tap
+     des feuilles sont en % de l'écran, relevées sur les captures. */
+  var route = [
+    { tab: 0 },
+    { sheet: 'resas', open: [50, 31.5], close: [50, 88.4], dim: 0.453 },
+    { tab: 1 },
+    { tab: 5 },
+    { tab: 6 },
+    { sheet: 'participants', open: [74, 10], close: [89, 13.1], dim: 0.21 }
+  ];
+  var step = 0, scrollX = 0, tabNow = 0;
+  var dim = device.querySelector('[data-dim]');
+  var sheets = {}, tops = {};
+  Array.prototype.forEach.call(device.querySelectorAll('[data-sheet]'), function (el) { sheets[el.getAttribute('data-sheet')] = el; });
+  Array.prototype.forEach.call(device.querySelectorAll('[data-sheet-top]'), function (el) { tops[el.getAttribute('data-sheet-top')] = el; });
 
   function maxScroll() { return Math.max(0, track.scrollWidth - bar.clientWidth); }
   function setScroll(x) {
@@ -38,13 +51,23 @@
     pill.style.setProperty('--pw', t.offsetWidth + 'px');
     tabs.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
   }
-  function tapAt(i) {
-    var t = tabs[i];
-    tap.style.left = (bar.offsetLeft + t.offsetLeft - scrollX + t.offsetWidth / 2) + 'px';
-    tap.style.top = (bar.offsetTop + bar.offsetHeight / 2) + 'px';
+  function tapXY(left, top) {
+    tap.style.left = left;
+    tap.style.top = top;
     tap.classList.remove('is-tapping');
     void tap.offsetWidth;
     tap.classList.add('is-tapping');
+  }
+  function tapAt(i) {
+    var t = tabs[i];
+    tapXY((bar.offsetLeft + t.offsetLeft - scrollX + t.offsetWidth / 2) + 'px', (bar.offsetTop + bar.offsetHeight / 2) + 'px');
+  }
+  function tapPct(p) { tapXY(p[0] + '%', p[1] + '%'); }
+  function setSheet(st, on) {
+    dim.style.setProperty('--dim', st.dim);
+    dim.classList.toggle('is-on', on);
+    sheets[st.sheet].classList.toggle('is-open', on);
+    if (tops[st.sheet]) tops[st.sheet].classList.toggle('is-on', on);
   }
   function show(from, to) {
     var dir = to > from ? 1 : -1;
@@ -60,10 +83,9 @@
     inn.style.transition = '';
     inn.classList.add('is-active');
   }
-  function next() {
-    var from = route[step];
-    step = (step + 1) % route.length;
-    var to = route[step];
+  function goTab(to) {
+    var from = tabNow;
+    tabNow = to;
     // l'onglet visé est-il hors de la barre ? on la fait défiler d'abord
     var target = to >= 4 ? maxScroll() : 0;
     var delay = 0;
@@ -73,15 +95,34 @@
       setTimeout(function () { placePill(to); show(from, to); }, 160);
     }, delay);
   }
+  var sheetOpen = null;
+  function next() {
+    // une feuille ouverte se referme avant d'aller plus loin
+    if (sheetOpen) {
+      var st = sheetOpen; sheetOpen = null;
+      tapPct(st.close);
+      setTimeout(function () { setSheet(st, false); }, 160);
+      return;
+    }
+    step = (step + 1) % route.length;
+    var s = route[step];
+    if (s.sheet) {
+      tapPct(s.open);
+      setTimeout(function () { setSheet(s, true); }, 160);
+      sheetOpen = s;
+    } else {
+      goTab(s.tab);
+    }
+  }
 
   function init() { placePill(0); setScroll(0); }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(init); else init();
-  window.addEventListener('resize', function () { setScroll(route[step] >= 4 ? maxScroll() : 0); placePill(route[step]); });
+  window.addEventListener('resize', function () { setScroll(tabNow >= 4 ? maxScroll() : 0); placePill(tabNow); });
 
   if (reduce) return;
 
   var visible = true;
-  var timer = setInterval(function () { if (visible && !document.hidden) next(); }, 3600);
+  var timer = setInterval(function () { if (visible && !document.hidden) next(); }, 3200);
 
   /* ——— Rotation : repos + pointeur + défilement, lissés ——— */
   var px = 0, py = 0, tx = 0, ty = 0, scroll = 0;
