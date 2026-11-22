@@ -25,6 +25,19 @@
             "comment": "Idem, avec la barre finale que le navigateur ajoute parfois."
           }
         ]
+      },
+      {
+        "appIDs": ["9952578M38.com.paulrenauldon.ravito"],
+        "components": [
+          {
+            "/": "/ravito/plan",
+            "comment": "Partage d'un plan Ravito : ouvre Ravito, qui propose d'ajouter une copie du plan."
+          },
+          {
+            "/": "/ravito/plan/",
+            "comment": "Idem, avec la barre finale (forme construite par l'app)."
+          }
+        ]
       }
     ]
   }
