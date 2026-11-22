@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Plan Ravito</title>
+  <meta name="description" content="Un plan de ravitaillement pour la randonnée, partagé depuis l'application Ravito.">
+  <!-- Page d'un lien privé : rien à faire dans un moteur de recherche. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- ⚠️ CETTE PAGE DOIT RESTER SERVIE À `/ravito/plan/` : c'est le chemin
+       déclaré pour Ravito dans `.well-known/apple-app-site-association` et celui
+       que construit l'app (src/share.ts du dépôt pitghi/ravito). Le renommer
+       casse les liens déjà partagés.
+       Le plan est entièrement contenu dans la partie après le « # » de l'URL :
+       elle n'est jamais envoyée au serveur, rien n'est stocké nulle part. -->
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .plan { margin-top: 1.75rem; }
+    .plan h2 { margin-top: 0; font-size: 1.05rem; }
+    .plan ul { list-style: none; margin: 0 0 1rem; padding: 0; }
+    .plan li { display: flex; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid var(--border); }
+    .plan li:last-child { border-bottom: 0; }
+    .plan .t { min-width: 4.5rem; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--mint); }
+    .plan .l { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <div class="wrap wrap--narrow">
+    <header class="top">
+      <a class="brand" href="/"><img src="/assets/gabin.svg" alt="" width="36" height="36">Gabin</a>
+    </header>
+
+    <main>
+      <section class="hero hero--plain">
+        <p class="eyebrow" id="eyebrow">Plan Ravito</p>
+        <h1 id="title">Un plan de ravitaillement</h1>
+        <p class="lead" id="lead">Quoi manger et boire pendant la rando, et quand — partagé depuis l'application Ravito.</p>
+
+        <div class="cta-row">
+          <a class="btn btn--primary" id="open" href="#" hidden>Ouvrir dans Ravito</a>
+        </div>
+        <p class="meta" id="hint" style="margin-top:1.25rem">Ravito est une application iPhone en test privé : demande à la personne qui t'a envoyé ce lien de t'inviter sur TestFlight, puis rouvre ce lien.</p>
+      </section>
+
+      <section class="card plan" id="plan" hidden>
+        <h2 id="duration"></h2>
+        <ul id="items"></ul>
+        <ul id="recurring"></ul>
+      </section>
+
+      <p class="note" style="margin-top:1.5rem">Rien n'est stocké : tout le plan est contenu dans le lien lui-même.</p>
+    </main>
+
+    <footer class="bottom">
+      <nav class="site-map" aria-label="Plan du site">
+        <div>
+          <p class="site-map-head">Studio</p>
+          <ul>
+          <li><a href="/">Le studio</a></li>
+          <li><a href="mailto:contact@gabin-studio.fr">Contact</a></li>
+          <li><a href="/mentions-legales.html">Mentions légales</a></li>
+          </ul>
+        </div>
+      </nav>
+    </footer>
+  </div>
+
+  <script>
+  /*
+   * Lien de partage d'un plan Ravito : https://gabin-studio.fr/ravito/plan/#p=<code>
+   * <code> = base64url d'un JSON compact UTF-8 :
+   *   { v: 1, n: nom, d: durée (min), i: [[minute, texte]…], r: [[toutes les N min, texte]…] }
+   * Même format que src/share.ts dans le dépôt pitghi/ravito.
+   *
+   * Sur un iPhone qui a Ravito, iOS ouvre directement l'app (Universal Link) et
+   * cette page ne s'affiche pas. Sinon elle montre le plan et propose
+   * « Ouvrir dans Ravito » (ravito://plan#p=…), utile tant qu'iOS n'a pas encore
+   * pris en compte les Universal Links, ou depuis le navigateur d'une messagerie.
+   * Tout le contenu vient du lien : il est vérifié, borné et inséré en texte
+   * (jamais en HTML).
+   */
+  (function () {
+    var SEEN_KEY = 'ravito.app-installee';
+    var m = location.hash.match(/[#&]p=([A-Za-z0-9_-]+)/) || location.search.match(/[?&]p=([A-Za-z0-9_-]+)/);
+    var el = function (id) { return document.getElementById(id); };
+
+    function fail() {
+      el('eyebrow').textContent = 'Lien invalide';
+      el('title').textContent = 'Ce lien ne contient pas de plan';
+      el('lead').textContent = "Le lien est incomplet ou a été coupé par la messagerie. Demande à la personne qui te l'a envoyé de le repartager.";
+      el('hint').hidden = true;
+    }
+
+    function decode(code) {
+      var b64 = code.replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      var bin = atob(b64);
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    }
+
+    function num(x, min, max) {
+      return typeof x === 'number' && isFinite(x) && x >= min && x <= max ? Math.round(x) : null;
+    }
+    function text(x, max) { return typeof x === 'string' ? x.slice(0, max) : null; }
+    function fmt(min) { return Math.floor(min / 60) + ':' + String(min % 60).padStart(2, '0'); }
+
+    function row(list, left, right) {
+      var li = document.createElement('li');
+      var t = document.createElement('span'); t.className = 't'; t.textContent = left;
+      var l = document.createElement('span'); l.className = 'l'; l.textContent = right;
+      li.appendChild(t); li.appendChild(l); list.appendChild(li);
+    }
+
+    if (!m) return fail();
+    var w;
+    try { w = decode(m[1]); } catch (e) { return fail(); }
+    if (!w || w.v !== 1) return fail();
+
+    var name = (text(w.n, 80) || '').trim() || 'Plan partagé';
+    var duration = num(w.d, 1, 1440);
+    var items = (Array.isArray(w.i) ? w.i : []).slice(0, 100).map(function (x) {
+      return Array.isArray(x) ? [num(x[0], 0, 1440), text(x[1], 200)] : [null, null];
+    }).filter(function (x) { return x[0] !== null && x[1] !== null; }).sort(function (a, b) { return a[0] - b[0]; });
+    var recurring = (Array.isArray(w.r) ? w.r : []).slice(0, 20).map(function (x) {
+      return Array.isArray(x) ? [num(x[0], 5, 1440), text(x[1], 200)] : [null, null];
+    }).filter(function (x) { return x[0] !== null && x[1] !== null; });
+
+    document.title = name + ' · Plan Ravito';
+    el('title').textContent = name;
+    el('duration').textContent = duration ? 'Durée prévue : ' + fmt(duration) : 'Programme';
+    items.forEach(function (x) { row(el('items'), fmt(x[0]), x[1]); });
+    recurring.forEach(function (x) { row(el('recurring'), 'toutes les ' + x[0] + ' min', x[1]); });
+    if (!recurring.length) el('recurring').hidden = true;
+    el('plan').hidden = false;
+
+    var deepLink = 'ravito://plan#p=' + m[1];
+    var open = el('open');
+    open.href = deepLink;
+    open.hidden = false;
+
+    // L'app s'est ouverte → l'onglet passe en arrière-plan : on le note pour
+    // ouvrir directement l'app la prochaine fois.
+    open.addEventListener('click', function () {
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') {
+          try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) { /* mode privé */ }
+        }
+      }, { once: true });
+    });
+    var known = false;
+    try { known = localStorage.getItem(SEEN_KEY) === '1'; } catch (e) { /* mode privé */ }
+    if (known) {
+      el('hint').textContent = 'Ouverture de Ravito…';
+      location.href = deepLink;
+    }
+  })();
+  </script>
+</body>
+</html>
