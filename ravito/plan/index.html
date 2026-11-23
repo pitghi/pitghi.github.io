@@ -26,6 +26,8 @@
     .plan li:last-child { border-bottom: 0; }
     .plan .t { min-width: 4.5rem; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--mint); }
     .plan .l { overflow-wrap: anywhere; }
+    .plan .notes { white-space: pre-line; overflow-wrap: anywhere; margin: 0 0 1rem; }
+    .plan .notes strong { display: block; color: var(--mint); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -48,6 +50,7 @@
 
       <section class="card plan" id="plan" hidden>
         <h2 id="duration"></h2>
+        <p class="notes" id="notes" hidden><strong>À prévoir</strong><span id="notes-text"></span></p>
         <ul id="items"></ul>
         <ul id="recurring"></ul>
       </section>
@@ -73,7 +76,8 @@
   /*
    * Lien de partage d'un plan Ravito : https://gabin-studio.fr/ravito/plan/#p=<code>
    * <code> = base64url d'un JSON compact UTF-8 :
-   *   { v: 1, n: nom, d: durée (min), i: [[minute, texte]…], r: [[toutes les N min, texte]…] }
+   *   { v: 1, n: nom, d: durée (min), i: [[minute, texte]…], r: [[toutes les N min, texte]…],
+   *     t: notes « à prévoir » (optionnel) }
    * Même format que src/share.ts dans le dépôt pitghi/ravito.
    *
    * Sur un iPhone qui a Ravito, iOS ouvre directement l'app (Universal Link) et
@@ -137,6 +141,8 @@
     items.forEach(function (x) { row(el('items'), fmt(x[0]), x[1]); });
     recurring.forEach(function (x) { row(el('recurring'), 'toutes les ' + x[0] + ' min', x[1]); });
     if (!recurring.length) el('recurring').hidden = true;
+    var notes = (text(w.t, 1000) || '').trim();
+    if (notes) { el('notes-text').textContent = notes; el('notes').hidden = false; }
     el('plan').hidden = false;
 
     var deepLink = 'ravito://plan#p=' + m[1];
