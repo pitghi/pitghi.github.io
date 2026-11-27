@@ -74,8 +74,11 @@
 
   <script>
   /*
-   * Lien de partage d'un plan Ravito : https://gabin-studio.fr/ravito/plan/#p=<code>
-   * <code> = base64url d'un JSON compact UTF-8 :
+   * Lien de partage d'un plan Ravito : https://gabin-studio.fr/ravito/plan/?p=<code>
+   * (anciens liens : …/plan/#p=<code>, toujours lus).
+   * <code> = base64url d'un JSON compact UTF-8, coupé par un « . » tous les 80
+   * caractères (WhatsApp ne rend pas cliquable un bloc de plus de ~250 lettres
+   * sans ponctuation) ; les points sont ignorés au décodage :
    *   { v: 1, n: nom, d: durée (min), i: [[minute, texte]…], r: [[toutes les N min, texte]…],
    *     t: notes « à prévoir » (optionnel) }
    * Même format que src/share.ts dans le dépôt pitghi/ravito.
@@ -89,7 +92,7 @@
    */
   (function () {
     var SEEN_KEY = 'ravito.app-installee';
-    var m = location.hash.match(/[#&]p=([A-Za-z0-9_-]+)/) || location.search.match(/[?&]p=([A-Za-z0-9_-]+)/);
+    var m = location.hash.match(/[#&]p=([A-Za-z0-9_.-]+)/) || location.search.match(/[?&]p=([A-Za-z0-9_.-]+)/);
     var el = function (id) { return document.getElementById(id); };
 
     function fail() {
@@ -100,7 +103,7 @@
     }
 
     function decode(code) {
-      var b64 = code.replace(/-/g, '+').replace(/_/g, '/');
+      var b64 = code.replace(/\./g, '').replace(/-/g, '+').replace(/_/g, '/');
       while (b64.length % 4) b64 += '=';
       var bin = atob(b64);
       var bytes = new Uint8Array(bin.length);
